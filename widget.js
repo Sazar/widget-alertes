@@ -39,7 +39,6 @@ function sanitize(str) {
 
 /**
  * Convertit un HEX (#rrggbb ou #rgb) en rgba(r,g,b,a)
- * utilisé pour les champs colorpicker qui ne supportent pas rgba nativement.
  */
 function hex2rgba(hex, alpha) {
   hex = hex.replace('#', '');
@@ -62,7 +61,6 @@ function applyTheme() {
     const s = wrapper.style;
     s.setProperty('--accent-color',     getField('accentColor', '#9146ff'));
     s.setProperty('--accent-secondary', getField('accentSecondary', '#bf94ff'));
-    // Colorpickers HEX + champs opacité séparés → conversion en rgba
     const glowHex    = getField('glowColor', '#9146ff');
     const glowAlpha  = (parseInt(getField('glowOpacity', '40'))  || 40)  / 100;
     const bgHex      = getField('bgColor',   '#0f0a1e');
@@ -150,10 +148,13 @@ function launchConfetti(count = 60) {
 }
 
 // ── Son ───────────────────────────────────────
-function playSound(url, volume = 0.7) {
+// Les volumes sont stockés en 0–100 (entiers) dans fields.json,
+// on divise par 100 ici pour obtenir la valeur 0–1 attendue par HTMLAudioElement.
+function playSound(url, volumeInt) {
   if (!url) return;
+  const volume = Math.min(1, Math.max(0, (parseInt(volumeInt) || 70) / 100));
   soundEl.src    = url;
-  soundEl.volume = Math.min(1, Math.max(0, parseFloat(volume) || 0.7));
+  soundEl.volume = volume;
   soundEl.currentTime = 0;
   soundEl.load();
   soundEl.play().catch(() => {});
@@ -365,17 +366,18 @@ function showAlert(data) {
     }, 200);
   }
 
+  // Volumes en 0–100 dans les champs → playSound divise par 100
   const soundMap = {
-    follower:   [getField('soundFollow', ''),   getField('soundVolumeFollow', '0.7')],
-    subscriber: [getField('soundSub', ''),      getField('soundVolumeSub', '0.8')],
-    resub:      [getField('soundResub', ''),    getField('soundVolumeResub', '0.8')],
-    giftsub:    [getField('soundGiftSub', ''),  getField('soundVolumeGiftSub', '0.8')],
-    cheer:      [getField('soundBits', ''),     getField('soundVolumeBits', '0.75')],
-    tip:        [getField('soundTip', ''),      getField('soundVolumeTip', '0.9')],
-    raid:       [getField('soundRaid', ''),     getField('soundVolumeRaid', '0.8')],
-    host:       [getField('soundHost', ''),     getField('soundVolumeHost', '0.7')],
+    follower:   [getField('soundFollow', ''),   getField('soundVolumeFollow', '70')],
+    subscriber: [getField('soundSub', ''),      getField('soundVolumeSub', '80')],
+    resub:      [getField('soundResub', ''),    getField('soundVolumeResub', '80')],
+    giftsub:    [getField('soundGiftSub', ''),  getField('soundVolumeGiftSub', '80')],
+    cheer:      [getField('soundBits', ''),     getField('soundVolumeBits', '75')],
+    tip:        [getField('soundTip', ''),      getField('soundVolumeTip', '90')],
+    raid:       [getField('soundRaid', ''),     getField('soundVolumeRaid', '80')],
+    host:       [getField('soundHost', ''),     getField('soundVolumeHost', '70')],
   };
-  const [sUrl, sVol] = soundMap[type] || ['', '0.7'];
+  const [sUrl, sVol] = soundMap[type] || ['', '70'];
   if (sUrl) playSound(sUrl, sVol);
 
   startProgressBar(duration);
