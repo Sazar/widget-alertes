@@ -94,13 +94,6 @@ function applyTheme() {
 }
 
 // ── Particules ────────────────────────────────
-// Améliorations :
-//  - Vélocité divisée par 2 (vx/vy *= 3 au lieu de 6)
-//  - Gravité réduite (0.06 au lieu de 0.12) → trajectoire plus douce et plus haute
-//  - Décroissance de vie ralentie (0.012 au lieu de 0.022) → durée ~2x plus longue
-//  - Taille légèrement augmentée (r: 2–7px au lieu de 1.5–5px)
-//  - Canvas agrandi (180x180 au lieu de 140x140) pour suivre la trajectoire plus loin
-//  - Particules émises en éventail vers le haut (vy biaisé à -2)
 function launchParticles(color1, color2) {
   if (getField('showParticles', 'yes') !== 'yes') return;
   const count = Math.min(parseInt(getField('particleCount', '14')) || 14, 40);
@@ -192,9 +185,11 @@ function getTypeConfig(type) {
 
 // ── Construction du message ───────────────────
 function buildAlertContent(data) {
-  const type = data.type;
-  const cfg  = getTypeConfig(type);
-  const name = sanitize(data.username || data.name || 'Anonyme');
+  const type      = data.type;
+  const cfg       = getTypeConfig(type);
+  const name      = sanitize(data.username  || data.name      || 'Anonyme');
+  // recipient : bénéficiaire d'un giftsub (envoyé par SE dans evt.gifted ou evt.recipient)
+  const recipient = sanitize(data.recipient || data.gifted    || '');
 
   let mainMsg  = '';
   let subMsgTx = '';
@@ -205,13 +200,15 @@ function buildAlertContent(data) {
       mainMsg = getField('msgFollow', '{user} te follow ! 💜').replace('{user}', name);
       emojiOverride = getField('iconFollow', '💜');
       break;
+
     case 'subscriber':
       mainMsg = getField('msgSub', '{user} vient de sub !').replace('{user}', name);
       emojiOverride = getField('iconSub', '⭐');
       if (data.message) subMsgTx = '"' + sanitize(data.message) + '"';
       break;
+
     case 'resub': {
-      const months = data.months || data.amount || 1;
+      const months = data.months || 1;
       mainMsg = getField('msgResub', '{user} resub x{months} mois !')
         .replace('{user}', name)
         .replace('{months}', months);
@@ -219,14 +216,20 @@ function buildAlertContent(data) {
       if (data.message) subMsgTx = '"' + sanitize(data.message) + '"';
       break;
     }
+
     case 'giftsub': {
       const giftCount = data.amount || 1;
-      mainMsg = getField('msgGiftSub', '{user} offre {count} sub(s) !')
-        .replace('{user}', name)
-        .replace('{count}', giftCount);
+      // {recipient} = pseudo du ou des bénéficiaires
+      // Si communautaire (plusieurs), SE ne donne pas un nom unique → on affiche "la communauté"
+      const recipientLabel = recipient || 'la communauté';
+      mainMsg = getField('msgGiftSub', '{user} offre {count} sub(s) à {recipient} !')
+        .replace('{user}',      name)
+        .replace('{count}',     giftCount)
+        .replace('{recipient}', recipientLabel);
       emojiOverride = getField('iconGiftSub', '🎁');
       break;
     }
+
     case 'cheer': {
       const bits = data.amount || 0;
       mainMsg = getField('msgBits', '{user} envoie {bits} bits !')
@@ -235,27 +238,31 @@ function buildAlertContent(data) {
       emojiOverride = getField('iconBits', '💎');
       break;
     }
+
     case 'tip': {
       const amount = (parseFloat(data.amount) || 0).toFixed(2);
       mainMsg = getField('msgTip', '{user} donne {amount} !')
-        .replace('{user}', name)
+        .replace('{user}',   name)
         .replace('{amount}', amount);
       emojiOverride = getField('iconTip', '💰');
       if (data.message) subMsgTx = '"' + sanitize(data.message) + '"';
       break;
     }
+
     case 'raid': {
       const raiders = data.amount || data.raiders || 0;
       mainMsg = getField('msgRaid', '{user} raid avec {count} raiders !')
-        .replace('{user}', name)
+        .replace('{user}',  name)
         .replace('{count}', Number(raiders).toLocaleString());
       emojiOverride = getField('iconRaid', '⚔️');
       break;
     }
+
     case 'host':
       mainMsg = getField('msgHost', '{user} host le stream !').replace('{user}', name);
       emojiOverride = getField('iconHost', '📡');
       break;
+
     default:
       mainMsg = cfg.label + ' ' + name;
   }
@@ -319,13 +326,10 @@ function startProgressBar(durationMs) {
     progressBar.classList.remove('visible');
     return;
   }
-
   progressBar.classList.add('visible');
   if (progressRafId) cancelAnimationFrame(progressRafId);
-
   progressFill.style.transition = 'none';
   progressFill.style.transform  = 'scaleX(1)';
-
   progressRafId = requestAnimationFrame(() => {
     progressRafId = requestAnimationFrame(() => {
       progressFill.style.transition = `transform ${durationMs / 1000}s linear`;
@@ -459,6 +463,10 @@ function queueAlert(data) {
 }
 
 // ── Événements StreamElements ──────────────────
+// Détection resub fiable :
+//   SE envoie evt.isResub = true OU evt.streak > 0 pour un resub.
+//   Ne pas se fier à evt.months > 1 (peut valoir 1 au 1er anniversaire).
+//   SE envoie evt.gifted = true (ou evt.isCommunityGift) pour un giftsub.
 window.addEventListener('onEventReceived', function (obj) {
   const data = obj && obj.detail;
   if (!data || !data.listener) return;
@@ -482,11 +490,14 @@ window.addEventListener('onEventReceived', function (obj) {
   let type = mapped.type;
 
   if (listener === 'subscriber-latest') {
+    // 1. GiftSub — prioritaire
     if (evt.gifted || evt.isCommunityGift) {
       type = 'giftsub';
-    } else if (evt.months && parseInt(evt.months) > 1) {
+    // 2. Resub — SE envoie isResub=true ou streak>0 pour un renouvellement
+    } else if (evt.isResub || (evt.streak && parseInt(evt.streak) > 0)) {
       type = 'resub';
     }
+    // 3. Sinon → nouveau sub (type reste 'subscriber')
   }
 
   if (type === 'cheer') {
@@ -501,14 +512,16 @@ window.addEventListener('onEventReceived', function (obj) {
 
   queueAlert({
     type,
-    username: evt.displayName || evt.name || evt.sender,
-    amount:   evt.amount,
-    months:   evt.months,
-    message:  evt.message,
-    currency: evt.currency,
-    avatar:   evt.avatar,
-    raiders:  evt.raiders,
-    gifted:   evt.gifted,
+    username:  evt.displayName || evt.name || evt.sender,
+    amount:    evt.amount,
+    months:    evt.months,
+    // recipient = bénéficiaire d'un giftsub (SE l'envoie dans gifted ou recipient)
+    recipient: evt.recipient   || evt.gifted,
+    message:   evt.message,
+    currency:  evt.currency,
+    avatar:    evt.avatar,
+    raiders:   evt.raiders,
+    streak:    evt.streak,
   });
 });
 
@@ -525,12 +538,12 @@ window.addEventListener('onTestButtonClick', function (obj) {
   const testType = (obj && obj.detail && obj.detail.testType) ? obj.detail.testType : 'follower';
   const testData = {
     follower:   { type: 'follower',   username: 'TwitchUser42' },
-    subscriber: { type: 'subscriber', username: 'SubFan99',      message: 'Super stream !' },
-    resub:      { type: 'resub',      username: 'FidèleViewer',  months: 6, message: 'Déjà 6 mois !' },
-    giftsub:    { type: 'giftsub',    username: 'GiftKing',      amount: 5 },
-    cheer:      { type: 'cheer',      username: 'BitsQueen',     amount: 500 },
-    tip:        { type: 'tip',        username: 'DonatorPro',    amount: 10, currency: '€', message: 'Merci pour le stream !' },
-    raid:       { type: 'raid',       username: 'RaidLeader',    amount: 150 },
+    subscriber: { type: 'subscriber', username: 'SubFan99',     message: 'Super stream !' },
+    resub:      { type: 'resub',      username: 'FidèleViewer', months: 6, streak: 6, message: 'Déjà 6 mois !' },
+    giftsub:    { type: 'giftsub',    username: 'GiftKing',     amount: 1, recipient: 'LuckyViewer' },
+    cheer:      { type: 'cheer',      username: 'BitsQueen',    amount: 500 },
+    tip:        { type: 'tip',        username: 'DonatorPro',   amount: 10, currency: '€', message: 'Merci pour le stream !' },
+    raid:       { type: 'raid',       username: 'RaidLeader',   amount: 150 },
     host:       { type: 'host',       username: 'FriendStreamer' },
   };
   queueAlert(testData[testType] || testData['follower']);

@@ -285,14 +285,14 @@
 
   "_section_messages": { "type": "hidden", "value": "───── MESSAGES ─────" },
 
-  "msgFollow":  { "type": "text", "label": "Message Follower ({user})",           "value": "{user} te follow ! 💜" },
-  "msgSub":     { "type": "text", "label": "Message Sub ({user})",                "value": "{user} vient de sub !" },
-  "msgResub":   { "type": "text", "label": "Message Resub ({user}, {months})",    "value": "{user} resub x{months} mois !" },
-  "msgGiftSub": { "type": "text", "label": "Message GiftSub ({user}, {count})",   "value": "{user} offre {count} sub(s) !" },
-  "msgBits":    { "type": "text", "label": "Message Bits ({user}, {bits})",       "value": "{user} envoie {bits} bits !" },
-  "msgTip":     { "type": "text", "label": "Message Donation ({user}, {amount})", "value": "{user} donne {amount} !" },
-  "msgRaid":    { "type": "text", "label": "Message Raid ({user}, {count})",      "value": "{user} raid avec {count} raiders !" },
-  "msgHost":    { "type": "text", "label": "Message Host ({user})",               "value": "{user} host le stream !" },
+  "msgFollow":  { "type": "text", "label": "Message Follower  — variables : {user}",                   "value": "{user} te follow ! 💜" },
+  "msgSub":     { "type": "text", "label": "Message Sub       — variables : {user}",                   "value": "{user} vient de sub !" },
+  "msgResub":   { "type": "text", "label": "Message Resub     — variables : {user}, {months}",         "value": "{user} resub x{months} mois !" },
+  "msgGiftSub": { "type": "text", "label": "Message GiftSub   — variables : {user}, {count}, {recipient}", "value": "{user} offre {count} sub(s) à {recipient} !" },
+  "msgBits":    { "type": "text", "label": "Message Bits      — variables : {user}, {bits}",           "value": "{user} envoie {bits} bits !" },
+  "msgTip":     { "type": "text", "label": "Message Donation  — variables : {user}, {amount}",         "value": "{user} donne {amount} !" },
+  "msgRaid":    { "type": "text", "label": "Message Raid      — variables : {user}, {count}",          "value": "{user} raid avec {count} raiders !" },
+  "msgHost":    { "type": "text", "label": "Message Host      — variables : {user}",                   "value": "{user} host le stream !" },
 
   "_section_colors": { "type": "hidden", "value": "───── COULEURS PAR TYPE ─────" },
 
