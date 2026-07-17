@@ -1,6 +1,5 @@
 /* ============================================
    WIDGET ALERTES TWITCH — StreamElements v2
-   Corrections + Améliorations
    ============================================ */
 
 'use strict';
@@ -188,7 +187,7 @@ function buildAlertContent(data) {
   const type      = data.type;
   const cfg       = getTypeConfig(type);
   const name      = sanitize(data.username  || data.name      || 'Anonyme');
-  const recipient = sanitize(data.recipient || data.gifted    || '');
+  const recipient = sanitize(data.recipient || '');
 
   let mainMsg  = '';
   let subMsgTx = '';
@@ -207,7 +206,7 @@ function buildAlertContent(data) {
       break;
 
     case 'resub': {
-      const months = data.months || 1;
+      const months = parseInt(data.months) || 1;
       mainMsg = getField('msgResub', '{user} resub x{months} mois !')
         .replace('{user}', name)
         .replace('{months}', months);
@@ -217,7 +216,7 @@ function buildAlertContent(data) {
     }
 
     case 'giftsub': {
-      const giftCount = data.amount || 1;
+      const giftCount = parseInt(data.amount) || 1;
       const recipientLabel = recipient || 'la communauté';
       mainMsg = getField('msgGiftSub', '{user} offre {count} sub(s) à {recipient} !')
         .replace('{user}',      name)
@@ -459,47 +458,76 @@ function queueAlert(data) {
   processQueue();
 }
 
-// ── Logique de détection commune ──────────────
-// Utilisée par onEventReceived ET par simulateEvent (test SE).
-// Évite toute duplication et garantit un comportement identique
-// entre un vrai événement Twitch et un test depuis l'éditeur SE.
-function handleSubscriberEvent(evt) {
-  let type = 'subscriber';
+// ── Détection du type de sub ─────────────────────
+// SE peut envoyer les données dans deux structures différentes :
+//   A) obj.detail.event  (ancien widget loader)
+//   B) obj.detail.event.event  (nouveau widget loader SE v2+)
+// On normalise les deux ici.
+//
+// Détection en cascade (ordre de priorité) :
+//   1. gifted / isCommunityGift / bulkGift  → giftsub
+//   2. isResub === true                     → resub
+//   3. streak > 0                           → resub
+//   4. months > 1                           → resub (fallback si isResub absent)
+//   5. rien de tout ça                      → nouveau sub
+function detectSubType(evt) {
+  // Giftsub — toujours prioritaire
+  if (evt.gifted || evt.isCommunityGift || evt.bulkGift) return 'giftsub';
+  // Resub — flag explicite SE
+  if (evt.isResub === true) return 'resub';
+  // Resub — streak de mois consécutifs
+  if (evt.streak && parseInt(evt.streak) > 0) return 'resub';
+  // Resub — fallback: months > 1 (fiable dans 99% des cas)
+  // months=1 peut être un nouveau sub OU un resub du 1er mois,
+  // mais sans aucun autre flag disponible c'est le seul indicateur restant.
+  if (evt.months && parseInt(evt.months) > 1) return 'resub';
+  // Nouveau sub
+  return 'subscriber';
+}
 
-  // 1. GiftSub — prioritaire sur resub
-  if (evt.gifted || evt.isCommunityGift) {
-    type = 'giftsub';
-  // 2. Resub — SE envoie isResub=true OU streak>0 pour tout renouvellement
-  } else if (evt.isResub || (evt.streak && parseInt(evt.streak) > 0)) {
-    type = 'resub';
-  }
-  // 3. Sinon → nouveau sub
+function handleSubscriberEvent(evt) {
+  const type = detectSubType(evt);
+
+  // Pour un giftsub, evt.gifted contient le pseudo du bénéficiaire
+  // quand c'est un sub individuel. evt.recipient est l'autre champ possible.
+  const recipientRaw = evt.recipient || (typeof evt.gifted === 'string' ? evt.gifted : '');
 
   queueAlert({
     type,
-    username:  evt.displayName || evt.name || evt.sender,
+    username:  evt.displayName || evt.name || evt.sender || 'Anonyme',
     amount:    evt.amount,
-    months:    evt.months,
-    recipient: evt.recipient || evt.gifted,
+    months:    parseInt(evt.months) || 1,
+    recipient: recipientRaw,
     message:   evt.message,
     currency:  evt.currency,
     avatar:    evt.avatar,
     raiders:   evt.raiders,
-    streak:    evt.streak,
-    isResub:   evt.isResub,
+    streak:    parseInt(evt.streak) || 0,
   });
 }
 
 // ── Événements StreamElements ──────────────────
 window.addEventListener('onEventReceived', function (obj) {
-  const data = obj && obj.detail;
-  if (!data || !data.listener) return;
+  if (!obj || !obj.detail) return;
 
-  const listener = data.listener;
-  const evt      = data.event;
+  const detail   = obj.detail;
+  const listener = detail.listener;
+  if (!listener) return;
+
+  // SE envoie parfois detail.event, parfois detail.event.event (loader v2)
+  // On normalise : on prend toujours le niveau le plus profond disponible.
+  let evt = detail.event;
+  if (evt && evt.event && typeof evt.event === 'object') evt = evt.event;
   if (!evt) return;
 
-  // Listeners non-sub
+  // ─ Subscriber (nouveau / resub / giftsub) ─
+  if (listener === 'subscriber-latest') {
+    if (getField('enableSub', 'yes') !== 'yes') return;
+    handleSubscriberEvent(evt);
+    return;
+  }
+
+  // ─ Autres événements ─
   const filterMap = {
     'follower-latest': { type: 'follower', enabled: getField('enableFollow', 'yes') },
     'cheer-latest':    { type: 'cheer',    enabled: getField('enableBits',   'yes') },
@@ -508,22 +536,15 @@ window.addEventListener('onEventReceived', function (obj) {
     'host-latest':     { type: 'host',     enabled: getField('enableHost',   'yes') },
   };
 
-  if (listener === 'subscriber-latest') {
-    if (getField('enableSub', 'yes') !== 'yes') return;
-    handleSubscriberEvent(evt);
-    return;
-  }
-
   const mapped = filterMap[listener];
   if (!mapped || mapped.enabled !== 'yes') return;
 
-  let type = mapped.type;
+  const type = mapped.type;
 
   if (type === 'cheer') {
     const minBits = parseInt(getField('minBits', '1')) || 1;
     if (parseInt(evt.amount) < minBits) return;
   }
-
   if (type === 'tip') {
     const minTip = parseFloat(getField('minTip', '0')) || 0;
     if (parseFloat(evt.amount) < minTip) return;
@@ -531,10 +552,10 @@ window.addEventListener('onEventReceived', function (obj) {
 
   queueAlert({
     type,
-    username:  evt.displayName || evt.name || evt.sender,
+    username:  evt.displayName || evt.name || evt.sender || 'Anonyme',
     amount:    evt.amount,
     months:    evt.months,
-    recipient: evt.recipient || evt.gifted,
+    recipient: evt.recipient || '',
     message:   evt.message,
     currency:  evt.currency,
     avatar:    evt.avatar,
@@ -552,19 +573,17 @@ window.addEventListener('onWidgetLoad', function (obj) {
 });
 
 // ── Bouton test SE Editor ─────────────────────
-// SE envoie testType="subscriber" pour nouveau sub, resub ET giftsub.
-// On simule un vrai événement avec les bons flags pour passer
-// exactement par handleSubscriberEvent(), comme en production.
+// Tous les tests sub passent par handleSubscriberEvent()
+// avec les bons flags pour tester la même logique qu'en production.
 window.addEventListener('onTestButtonClick', function (obj) {
   const testType = (obj && obj.detail && obj.detail.testType) ? obj.detail.testType : 'follower';
 
-  // Événements non-sub : payload direct
   const simpleTests = {
-    follower: { type: 'follower',   username: 'TwitchUser42' },
-    cheer:    { type: 'cheer',      username: 'BitsQueen',    amount: 500 },
-    tip:      { type: 'tip',        username: 'DonatorPro',   amount: 10,  currency: '€', message: 'Merci pour le stream !' },
-    raid:     { type: 'raid',       username: 'RaidLeader',   amount: 150 },
-    host:     { type: 'host',       username: 'FriendStreamer' },
+    follower: { type: 'follower', username: 'TwitchUser42' },
+    cheer:    { type: 'cheer',    username: 'BitsQueen',    amount: 500 },
+    tip:      { type: 'tip',      username: 'DonatorPro',   amount: 10, currency: '€', message: 'Merci pour le stream !' },
+    raid:     { type: 'raid',     username: 'RaidLeader',   amount: 150 },
+    host:     { type: 'host',     username: 'FriendStreamer' },
   };
 
   if (simpleTests[testType]) {
@@ -572,38 +591,12 @@ window.addEventListener('onTestButtonClick', function (obj) {
     return;
   }
 
-  // Événements sub : on passe par handleSubscriberEvent avec les bons flags
-  // pour que la détection soit identique aux vrais événements Twitch.
+  // Sous-types sub : flags exacts pour déclencher detectSubType() correctement
   const subTests = {
-    // Nouveau sub → pas de isResub, pas de streak, pas de gifted
-    subscriber: {
-      displayName: 'SubFan99',
-      message:     'Super stream !',
-      isResub:     false,
-      streak:      0,
-      gifted:      false,
-      months:      1,
-    },
-    // Resub → isResub=true + streak > 0
-    resub: {
-      displayName: 'FidèleViewer',
-      message:     'Déjà 6 mois !',
-      isResub:     true,
-      streak:      6,
-      months:      6,
-      gifted:      false,
-    },
-    // GiftSub → gifted=true
-    giftsub: {
-      displayName: 'GiftKing',
-      amount:      1,
-      gifted:      true,
-      recipient:   'LuckyViewer',
-      isResub:     false,
-      streak:      0,
-    },
+    subscriber: { displayName: 'SubFan99',      message: 'Super stream !', isResub: false, streak: 0, gifted: false, months: 1 },
+    resub:      { displayName: 'FidèleViewer', message: 'Déjà 6 mois !',  isResub: true,  streak: 6, gifted: false, months: 6 },
+    giftsub:    { displayName: 'GiftKing',       amount: 1,                 gifted: 'LuckyViewer', recipient: 'LuckyViewer', isResub: false, streak: 0, months: 1 },
   };
 
-  const fakeEvt = subTests[testType] || subTests['subscriber'];
-  handleSubscriberEvent(fakeEvt);
+  handleSubscriberEvent(subTests[testType] || subTests['subscriber']);
 });
