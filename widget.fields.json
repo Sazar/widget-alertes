@@ -1,4 +1,10 @@
 {
+  "showProgressBar": {
+    "type": "checkbox",
+    "label": "Afficher la barre de progression",
+    "value": true
+  },
+
   "_section_general": { "type": "hidden", "value": "───── GÉNÉRAL ─────" },
 
   "alertDuration": {
@@ -117,15 +123,6 @@
   "pulseGlow": {
     "type": "dropdown",
     "label": "Effet pulse glow",
-    "value": "yes",
-    "options": { "yes": "Oui", "no": "Non" }
-  },
-
-  "_section_progressbar": { "type": "hidden", "value": "───── BARRE DE TEMPS ─────" },
-
-  "showProgressBar": {
-    "type": "dropdown",
-    "label": "Afficher la barre de progression",
     "value": "yes",
     "options": { "yes": "Oui", "no": "Non" }
   },

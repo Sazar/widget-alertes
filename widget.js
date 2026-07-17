@@ -32,6 +32,15 @@ function getField(key, fallback) {
   return (v !== undefined && v !== '') ? v : fallback;
 }
 
+// SE envoie les checkbox comme booléen true/false ou string 'true'/'false'
+// selon la version de l'éditeur. On normalise en booléen.
+function getCheckbox(key, defaultVal) {
+  const v = fieldData[key];
+  if (v === undefined || v === '') return defaultVal;
+  if (typeof v === 'boolean') return v;
+  return String(v).toLowerCase() === 'true';
+}
+
 function sanitize(str) {
   const div = document.createElement('div');
   div.textContent = String(str);
@@ -294,28 +303,24 @@ function setTypeBadge(type) {
 }
 
 // ── Progress bar ──────────────────────────────
-// Technique : on reset scaleX(1) sans transition dans un premier rAF,
-// puis on lance la transition shrink dans le rAF suivant.
-// Ça garantit que le navigateur a bien rendu le reset avant de démarrer.
 let progressRafId = null;
 
 function startProgressBar(durationMs) {
-  // Cacher la barre si l'option est désactivée
-  if (getField('showProgressBar', 'yes') !== 'yes') {
+  // Checkbox SE : booléen ou string 'true'/'false'
+  if (!getCheckbox('showProgressBar', true)) {
     progressBar.classList.remove('visible');
     return;
   }
 
   progressBar.classList.add('visible');
 
-  // Annuler tout rAF en cours
   if (progressRafId) cancelAnimationFrame(progressRafId);
 
-  // Étape 1 : reset instantané (sans transition)
+  // Reset sans transition
   progressFill.style.transition = 'none';
   progressFill.style.transform  = 'scaleX(1)';
 
-  // Étape 2 : dans le rAF suivant, lancer la transition de shrink
+  // Double rAF : garantit que le navigateur a rendu le reset avant de lancer le shrink
   progressRafId = requestAnimationFrame(() => {
     progressRafId = requestAnimationFrame(() => {
       progressFill.style.transition = `transform ${durationMs / 1000}s linear`;
@@ -411,7 +416,6 @@ function showAlert(data) {
   const [sUrl, sVol] = soundMap[type] || ['', '70'];
   if (sUrl) playSound(sUrl, sVol);
 
-  // Lance la barre (visible seulement si showProgressBar === 'yes')
   startProgressBar(duration);
 
   const outDuration = 500;
