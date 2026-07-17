@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Widget Alertes Twitch</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Montserrat:wght@700;900&family=Poppins:wght@400;600;700;800&family=Orbitron:wght@700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- Conteneur principal du widget -->
+<div id="alert-wrapper" class="hidden">
+
+  <!-- Bandeau d'alerte -->
+  <div id="alert-box">
+
+    <!-- Icone / Avatar -->
+    <div id="alert-icon-wrap">
+      <div id="alert-icon">⚡</div>
+      <canvas id="particles-canvas"></canvas>
+    </div>
+
+    <!-- Contenu texte -->
+    <div id="alert-content">
+      <div id="alert-username">Username</div>
+      <div id="alert-message">Message d'alerte</div>
+      <div id="alert-sub-message"></div>
+    </div>
+
+    <!-- Barre de progression -->
+    <div id="alert-progress-bar">
+      <div id="alert-progress-fill"></div>
+    </div>
+
+  </div>
+
+  <!-- Effets d'arrière-plan -->
+  <div id="alert-bg-glow"></div>
+  <div id="confetti-container"></div>
+
+</div>
+
+<!-- Audio (chargé dynamiquement par JS) -->
+<audio id="alert-sound" preload="auto"></audio>
+
+</body>
+</html>

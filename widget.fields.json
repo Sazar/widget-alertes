@@ -1,0 +1,187 @@
+{
+  "fieldData": {
+
+    "_section_general": { "type": "hidden", "value": "──── GÉNÉRAL ────" },
+    "language": {
+      "type": "dropdown",
+      "label": "Langue des messages",
+      "value": "fr",
+      "options": { "fr": "Français", "en": "English" }
+    },
+    "alertDuration": {
+      "type": "number",
+      "label": "Durée d'alerte (secondes)",
+      "value": 7,
+      "min": 2, "max": 30
+    },
+    "alertDelay": {
+      "type": "number",
+      "label": "Délai entre alertes (secondes)",
+      "value": 0,
+      "min": 0, "max": 10
+    },
+    "maxQueue": {
+      "type": "number",
+      "label": "Taille max de la file d'attente",
+      "value": 10,
+      "min": 1, "max": 50
+    },
+    "widgetWidth": {
+      "type": "number",
+      "label": "Largeur du widget (px)",
+      "value": 680,
+      "min": 300, "max": 1200
+    },
+    "position": {
+      "type": "dropdown",
+      "label": "Position du widget",
+      "value": "bottom-center",
+      "options": {
+        "bottom-center": "Bas Centre",
+        "bottom-left":   "Bas Gauche",
+        "bottom-right":  "Bas Droite",
+        "top-center":    "Haut Centre",
+        "top-left":      "Haut Gauche",
+        "top-right":     "Haut Droite",
+        "center":        "Centre Écran"
+      }
+    },
+
+    "_section_theme": { "type": "hidden", "value": "──── THÈME ────" },
+    "theme": {
+      "type": "dropdown",
+      "label": "Thème prédéfini",
+      "value": "twitch",
+      "options": {
+        "twitch":  "💜 Twitch Purple",
+        "neon":    "🟢 Neon Cyan",
+        "fire":    "🔥 Fire Orange",
+        "rose":    "🌸 Rose Pastel",
+        "minimal": "⬜ Minimaliste",
+        "custom":  "🎨 Personnalisé"
+      }
+    },
+    "accentColor":     { "type": "colorpicker", "label": "Couleur accent principale (custom)",   "value": "#9146ff" },
+    "accentSecondary": { "type": "colorpicker", "label": "Couleur accent secondaire (custom)",   "value": "#bf94ff" },
+    "glowColor":       { "type": "colorpicker", "label": "Couleur du glow (custom)",             "value": "#9146ff" },
+    "bgColor":         { "type": "colorpicker", "label": "Couleur fond (custom)",               "value": "#0f0a1e" },
+    "borderColor":     { "type": "colorpicker", "label": "Couleur bordure (custom)",             "value": "#9146ff" },
+    "borderRadius":    { "type": "number",      "label": "Arrondi des coins (px)",              "value": 16, "min": 0, "max": 50 },
+    "pulseGlow":  { "type": "dropdown", "label": "Animation glow pulsé", "value": "yes", "options": {"yes":"Oui","no":"Non"} },
+    "showParticles":   { "type": "dropdown", "label": "Afficher particules",  "value": "yes", "options": {"yes":"Oui","no":"Non"} },
+    "particleCount":   { "type": "number",   "label": "Nombre de particules", "value": 12, "min": 0, "max": 40 },
+    "showConfetti":    { "type": "dropdown", "label": "Confetti (dons/raids)","value": "yes", "options": {"yes":"Oui","no":"Non"} },
+    "confettiBitsThreshold": { "type": "number", "label": "Bits minimum pour confetti", "value": 1000, "min": 100, "max": 99999 },
+
+    "_section_font": { "type": "hidden", "value": "──── TYPOGRAPHIE ────" },
+    "fontTitle": {
+      "type": "dropdown",
+      "label": "Police du pseudo",
+      "value": "Montserrat",
+      "options": {
+        "Montserrat": "Montserrat",
+        "Poppins":    "Poppins",
+        "Inter":      "Inter",
+        "Orbitron":   "Orbitron (Tech)",
+        "Rajdhani":   "Rajdhani",
+        "Impact, sans-serif": "Impact"
+      }
+    },
+    "fontMessage":        { "type": "dropdown", "label": "Police du message", "value": "Inter",
+      "options": {"Inter":"Inter","Poppins":"Poppins","Montserrat":"Montserrat","Rajdhani":"Rajdhani"}
+    },
+    "fontSizeUsername":   { "type": "number", "label": "Taille pseudo (px)",  "value": 22, "min": 12, "max": 48 },
+    "fontSizeMessage":    { "type": "number", "label": "Taille message (px)", "value": 14, "min": 10, "max": 32 },
+    "colorUsername":      { "type": "colorpicker", "label": "Couleur pseudo",  "value": "#ffffff" },
+    "colorMessage":       { "type": "colorpicker", "label": "Couleur message", "value": "#cccccc" },
+    "showAvatar":         { "type": "dropdown", "label": "Afficher avatar Twitch", "value": "no", "options": {"yes":"Oui","no":"Non (Emoji)"} },
+
+    "_section_animation": { "type": "hidden", "value": "──── ANIMATIONS ────" },
+    "animationIn": {
+      "type": "dropdown",
+      "label": "Animation d'entrée",
+      "value": "slideup",
+      "options": {
+        "slideup":    "Slide Up",
+        "slideleft":  "Slide Left",
+        "slideright": "Slide Right",
+        "zoom":       "Zoom",
+        "fade":       "Fondu",
+        "bounce":     "Bounce",
+        "flip":       "Flip 3D"
+      }
+    },
+    "animationOut": {
+      "type": "dropdown",
+      "label": "Animation de sortie",
+      "value": "fade",
+      "options": {
+        "slideup":    "Slide Down",
+        "slideleft":  "Slide Left",
+        "slideright": "Slide Right",
+        "zoom":       "Zoom Out",
+        "fade":       "Fondu",
+        "flip":       "Flip 3D"
+      }
+    },
+    "shakeIcon": { "type": "dropdown", "label": "Shake icône sur Bits", "value": "yes", "options": {"yes":"Oui","no":"Non"} },
+
+    "_section_events": { "type": "hidden", "value": "──── ÉVÉNEMENTS ────" },
+    "enableFollow":  { "type": "dropdown", "label": "Activer alertes Follow",    "value": "yes", "options": {"yes":"Oui","no":"Non"} },
+    "enableSub":     { "type": "dropdown", "label": "Activer alertes Sub",       "value": "yes", "options": {"yes":"Oui","no":"Non"} },
+    "enableBits":    { "type": "dropdown", "label": "Activer alertes Bits",      "value": "yes", "options": {"yes":"Oui","no":"Non"} },
+    "enableTip":     { "type": "dropdown", "label": "Activer alertes Dons",      "value": "yes", "options": {"yes":"Oui","no":"Non"} },
+    "enableRaid":    { "type": "dropdown", "label": "Activer alertes Raids",     "value": "yes", "options": {"yes":"Oui","no":"Non"} },
+    "enableHost":    { "type": "dropdown", "label": "Activer alertes Host",      "value": "yes", "options": {"yes":"Oui","no":"Non"} },
+    "minBits":       { "type": "number",   "label": "Bits minimum pour alerte",  "value": 1,   "min": 1, "max": 99999 },
+    "minTip":        { "type": "number",   "label": "Don minimum pour alerte (€)","value": 0,  "min": 0, "max": 9999 },
+    "currency":      { "type": "text",     "label": "Symbole monétaire",          "value": "€" },
+
+    "_section_icons": { "type": "hidden", "value": "──── ICÔNES ────" },
+    "iconFollow":  { "type": "text", "label": "Icône Follow",    "value": "💜" },
+    "iconSub":     { "type": "text", "label": "Icône Sub",       "value": "⭐" },
+    "iconResub":   { "type": "text", "label": "Icône Resub",     "value": "🔄" },
+    "iconGiftSub": { "type": "text", "label": "Icône Gift Sub",  "value": "🎁" },
+    "iconBits":    { "type": "text", "label": "Icône Bits",      "value": "💎" },
+    "iconTip":     { "type": "text", "label": "Icône Don",       "value": "💰" },
+    "iconRaid":    { "type": "text", "label": "Icône Raid",      "value": "⚔️" },
+    "iconHost":    { "type": "text", "label": "Icône Host",      "value": "📡" },
+
+    "_section_messages": { "type": "hidden", "value": "──── MESSAGES ────" },
+    "msgFollow":  { "type": "text", "label": "Message Follow",    "value": "{user} te follow ! 💜" },
+    "msgSub":     { "type": "text", "label": "Message Sub",       "value": "{user} vient de sub !" },
+    "msgResub":   { "type": "text", "label": "Message Resub",     "value": "{user} resub x{months} mois !" },
+    "msgGiftSub": { "type": "text", "label": "Message Gift Sub",  "value": "{user} offre {count} sub(s) !" },
+    "msgBits":    { "type": "text", "label": "Message Bits",      "value": "{user} envoie {bits} bits !" },
+    "msgTip":     { "type": "text", "label": "Message Don",       "value": "{user} donne {amount}{currency} !" },
+    "msgRaid":    { "type": "text", "label": "Message Raid",      "value": "{user} raid avec {count} raiders !" },
+    "msgHost":    { "type": "text", "label": "Message Host",      "value": "{user} host le stream !" },
+
+    "_section_colors": { "type": "hidden", "value": "──── COULEURS PAR EVENT ────" },
+    "colorFollow":  { "type": "colorpicker", "label": "Couleur accent Follow",    "value": "" },
+    "colorSub":     { "type": "colorpicker", "label": "Couleur accent Sub",       "value": "" },
+    "colorResub":   { "type": "colorpicker", "label": "Couleur accent Resub",     "value": "" },
+    "colorGiftSub": { "type": "colorpicker", "label": "Couleur accent Gift Sub",  "value": "" },
+    "colorBits":    { "type": "colorpicker", "label": "Couleur accent Bits",      "value": "" },
+    "colorTip":     { "type": "colorpicker", "label": "Couleur accent Don",       "value": "" },
+    "colorRaid":    { "type": "colorpicker", "label": "Couleur accent Raid",      "value": "" },
+
+    "_section_sounds": { "type": "hidden", "value": "──── SONS ────" },
+    "soundFollow":  { "type": "text",   "label": "URL Son Follow",         "value": "" },
+    "soundVolumeFollow": { "type": "slider", "label": "Volume Follow", "value": 70, "min": 0, "max": 100 },
+    "soundSub":     { "type": "text",   "label": "URL Son Sub",            "value": "" },
+    "soundVolumeSub":    { "type": "slider", "label": "Volume Sub",    "value": 80, "min": 0, "max": 100 },
+    "soundResub":   { "type": "text",   "label": "URL Son Resub",          "value": "" },
+    "soundVolumeResub":  { "type": "slider", "label": "Volume Resub",  "value": 80, "min": 0, "max": 100 },
+    "soundGiftSub": { "type": "text",   "label": "URL Son Gift Sub",       "value": "" },
+    "soundVolumeGiftSub":{ "type": "slider", "label": "Volume GiftSub","value": 80, "min": 0, "max": 100 },
+    "soundBits":    { "type": "text",   "label": "URL Son Bits",           "value": "" },
+    "soundVolumeBits":   { "type": "slider", "label": "Volume Bits",   "value": 75, "min": 0, "max": 100 },
+    "soundTip":     { "type": "text",   "label": "URL Son Don",            "value": "" },
+    "soundVolumeTip":    { "type": "slider", "label": "Volume Don",    "value": 90, "min": 0, "max": 100 },
+    "soundRaid":    { "type": "text",   "label": "URL Son Raid",           "value": "" },
+    "soundVolumeRaid":   { "type": "slider", "label": "Volume Raid",   "value": 80, "min": 0, "max": 100 },
+    "soundHost":    { "type": "text",   "label": "URL Son Host",           "value": "" },
+    "soundVolumeHost":   { "type": "slider", "label": "Volume Host",   "value": 70, "min": 0, "max": 100 }
+  }
+}
