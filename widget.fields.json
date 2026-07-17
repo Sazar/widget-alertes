@@ -1,13 +1,6 @@
 {
   "_section_general": { "type": "hidden", "value": "──── GÉNÉRAL ────" },
 
-  "language": {
-    "type": "dropdown",
-    "label": "Langue des messages",
-    "value": "fr",
-    "options": { "fr": "Français", "en": "English" }
-  },
-
   "alertDuration": {
     "type": "number",
     "label": "Durée d'alerte (secondes)",
@@ -86,21 +79,45 @@
   },
 
   "glowColor": {
-    "type": "text",
-    "label": "Couleur glow — rgba(...) (thème custom)",
-    "value": "rgba(145,70,255,0.4)"
+    "type": "colorpicker",
+    "label": "Couleur glow (thème custom)",
+    "value": "#9146ff"
+  },
+
+  "glowOpacity": {
+    "type": "number",
+    "label": "Opacité glow (0–100)",
+    "value": 40,
+    "min": 0,
+    "max": 100
   },
 
   "bgColor": {
-    "type": "text",
-    "label": "Couleur fond — rgba(...) (thème custom)",
-    "value": "rgba(15,10,30,0.95)"
+    "type": "colorpicker",
+    "label": "Couleur fond (thème custom)",
+    "value": "#0f0a1e"
+  },
+
+  "bgOpacity": {
+    "type": "number",
+    "label": "Opacité fond (0–100)",
+    "value": 95,
+    "min": 0,
+    "max": 100
   },
 
   "borderColor": {
-    "type": "text",
-    "label": "Couleur bordure — rgba(...) (thème custom)",
-    "value": "rgba(145,70,255,0.5)"
+    "type": "colorpicker",
+    "label": "Couleur bordure (thème custom)",
+    "value": "#9146ff"
+  },
+
+  "borderOpacity": {
+    "type": "number",
+    "label": "Opacité bordure (0–100)",
+    "value": 50,
+    "min": 0,
+    "max": 100
   },
 
   "borderRadius": {

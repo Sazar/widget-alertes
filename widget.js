@@ -31,11 +31,24 @@ function getField(key, fallback) {
   return (v !== undefined && v !== '') ? v : fallback;
 }
 
-// FIX: sanitisation XSS
 function sanitize(str) {
   const div = document.createElement('div');
   div.textContent = String(str);
   return div.innerHTML;
+}
+
+/**
+ * Convertit un HEX (#rrggbb ou #rgb) en rgba(r,g,b,a)
+ * utilisé pour les champs colorpicker qui ne supportent pas rgba nativement.
+ */
+function hex2rgba(hex, alpha) {
+  hex = hex.replace('#', '');
+  if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+  const a = Math.min(1, Math.max(0, alpha));
+  return `rgba(${r},${g},${b},${a})`;
 }
 
 function applyTheme() {
@@ -49,9 +62,16 @@ function applyTheme() {
     const s = wrapper.style;
     s.setProperty('--accent-color',     getField('accentColor', '#9146ff'));
     s.setProperty('--accent-secondary', getField('accentSecondary', '#bf94ff'));
-    s.setProperty('--glow-color',       getField('glowColor', 'rgba(145,70,255,0.4)'));
-    s.setProperty('--bg-color',         getField('bgColor', 'rgba(15,10,30,0.95)'));
-    s.setProperty('--border-color',     getField('borderColor', 'rgba(145,70,255,0.5)'));
+    // Colorpickers HEX + champs opacité séparés → conversion en rgba
+    const glowHex    = getField('glowColor', '#9146ff');
+    const glowAlpha  = (parseInt(getField('glowOpacity', '40'))  || 40)  / 100;
+    const bgHex      = getField('bgColor',   '#0f0a1e');
+    const bgAlpha    = (parseInt(getField('bgOpacity',   '95'))  || 95)  / 100;
+    const borderHex  = getField('borderColor', '#9146ff');
+    const borderAlpha= (parseInt(getField('borderOpacity','50')) || 50) / 100;
+    s.setProperty('--glow-color',   hex2rgba(glowHex,   glowAlpha));
+    s.setProperty('--bg-color',     hex2rgba(bgHex,     bgAlpha));
+    s.setProperty('--border-color', hex2rgba(borderHex, borderAlpha));
   }
 
   wrapper.style.setProperty('--border-radius',       getField('borderRadius', '16') + 'px');
@@ -141,26 +161,24 @@ function playSound(url, volume = 0.7) {
 
 // ── Config par type d'alerte ──────────────────
 const TYPE_CONFIG = {
-  follower:   { emoji: '💜', label: 'Follower',    labelEn: 'Follower' },
-  subscriber: { emoji: '⭐', label: 'Nouveau Sub', labelEn: 'New Sub' },
-  resub:      { emoji: '🔄', label: 'Resub',       labelEn: 'Resub' },
-  giftsub:    { emoji: '🎁', label: 'Gift Sub',    labelEn: 'Gift Sub' },
-  cheer:      { emoji: '💎', label: 'Bits',        labelEn: 'Bits' },
-  tip:        { emoji: '💰', label: 'Don',         labelEn: 'Donation' },
-  raid:       { emoji: '⚔️', label: 'Raid',        labelEn: 'Raid' },
-  host:       { emoji: '📡', label: 'Host',        labelEn: 'Host' },
+  follower:   { emoji: '💜', label: 'Follower'    },
+  subscriber: { emoji: '⭐', label: 'Nouveau Sub' },
+  resub:      { emoji: '🔄', label: 'Resub'       },
+  giftsub:    { emoji: '🎁', label: 'Gift Sub'    },
+  cheer:      { emoji: '💎', label: 'Bits'        },
+  tip:        { emoji: '💰', label: 'Don'         },
+  raid:       { emoji: '⚔️', label: 'Raid'        },
+  host:       { emoji: '📡', label: 'Host'        },
 };
 
 function getTypeConfig(type) {
-  return TYPE_CONFIG[type] || { emoji: '🔔', label: 'Alerte', labelEn: 'Alert' };
+  return TYPE_CONFIG[type] || { emoji: '🔔', label: 'Alerte' };
 }
 
 // ── Construction du message ───────────────────
 function buildAlertContent(data) {
-  const lang  = getField('language', 'fr');
   const type  = data.type;
   const cfg   = getTypeConfig(type);
-  // FIX: sanitise le nom pour éviter XSS
   const name  = sanitize(data.username || data.name || 'Anonyme');
 
   let mainMsg  = '';
@@ -178,7 +196,6 @@ function buildAlertContent(data) {
       if (data.message) subMsgTx = '"' + sanitize(data.message) + '"';
       break;
     case 'resub': {
-      // FIX: priorité à data.months (fourni par SE evt.months), puis data.amount
       const months = data.months || data.amount || 1;
       mainMsg = getField('msgResub', '{user} resub x{months} mois !')
         .replace('{user}', name)
@@ -215,7 +232,6 @@ function buildAlertContent(data) {
       break;
     }
     case 'raid': {
-      // FIX: SE envoie evt.amount pour les raiders, pas evt.raiders
       const raiders = data.amount || data.raiders || 0;
       mainMsg = getField('msgRaid', '{user} raid avec {count} raiders !')
         .replace('{user}', name)
@@ -228,7 +244,7 @@ function buildAlertContent(data) {
       emojiOverride = getField('iconHost', '📡');
       break;
     default:
-      mainMsg = (lang === 'fr' ? cfg.label : cfg.labelEn) + ' ' + name;
+      mainMsg = cfg.label + ' ' + name;
   }
 
   return { name, mainMsg, subMsgTx, emoji: emojiOverride || cfg.emoji };
@@ -264,9 +280,8 @@ function setTypeBadge(type) {
     typeBadge.style.display = 'none';
     return;
   }
-  const cfg  = getTypeConfig(type);
-  const lang = getField('language', 'fr');
-  typeBadge.textContent   = lang === 'fr' ? cfg.label : cfg.labelEn;
+  const cfg = getTypeConfig(type);
+  typeBadge.textContent   = cfg.label;
   typeBadge.style.display = 'block';
 }
 
@@ -276,9 +291,7 @@ function startProgressBar(durationMs) {
   if (progressRafId) cancelAnimationFrame(progressRafId);
   progressFill.style.transition = 'none';
   progressFill.style.transform  = 'scaleX(1)';
-  // Force reflow
   void progressFill.offsetWidth;
-  // FIX: rAF pour lancer la transition proprement
   progressRafId = requestAnimationFrame(() => {
     progressFill.style.transition = `transform ${durationMs / 1000}s linear`;
     progressFill.style.transform  = 'scaleX(0)';
@@ -295,12 +308,10 @@ function showAlert(data) {
   const animIn   = getField('animationIn', 'slideup');
   const animOut  = getField('animationOut', 'fade');
 
-  // FIX: lire les CSS vars APRÈS applyTheme
   const cs        = getComputedStyle(wrapper);
   const accent    = cs.getPropertyValue('--accent-color').trim() || '#9146ff';
   const secondary = cs.getPropertyValue('--accent-secondary').trim() || '#bf94ff';
 
-  // Remplissage DOM
   usernameEl.textContent = name;
   messageEl.textContent  = mainMsg;
   if (subMsgTx) {
@@ -313,7 +324,6 @@ function showAlert(data) {
 
   setTypeBadge(type);
 
-  // Icone
   const useAvatar = getField('showAvatar', 'no') === 'yes' && data.avatar;
   if (useAvatar) {
     const img = document.createElement('img');
@@ -328,8 +338,6 @@ function showAlert(data) {
   }
 
   applyTypeColors(type);
-
-  // Ring actif
   iconRing.classList.add('active');
 
   wrapper.classList.remove('hidden');
@@ -483,6 +491,5 @@ window.addEventListener('onTestButtonClick', function (obj) {
     raid:       { type: 'raid',       username: 'RaidLeader',    amount: 150 },
     host:       { type: 'host',       username: 'FriendStreamer' },
   };
-  // FIX: fallback sur follower si testType inconnu
   queueAlert(testData[testType] || testData['follower']);
 });
