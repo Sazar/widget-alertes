@@ -186,7 +186,7 @@ function getTypeConfig(type) {
 function buildAlertContent(data) {
   const type      = data.type;
   const cfg       = getTypeConfig(type);
-  const name      = sanitize(data.username  || data.name      || 'Anonyme');
+  const name      = sanitize(data.username || 'Anonyme');
   const recipient = sanitize(data.recipient || '');
 
   let mainMsg  = '';
@@ -458,46 +458,52 @@ function queueAlert(data) {
   processQueue();
 }
 
-// ── Détection du type de sub ─────────────────────
-// SE peut envoyer les données dans deux structures différentes :
-//   A) obj.detail.event  (ancien widget loader)
-//   B) obj.detail.event.event  (nouveau widget loader SE v2+)
-// On normalise les deux ici.
+// ── Détection du type de sub ──────────────────
+// Structure réelle du payload SE subscriber-latest :
+//   obj.detail = {
+//     listener: "subscriber-latest",
+//     event: {
+//       name: "pseudo",
+//       amount: 3,          ← nombre de mois
+//       count: 3,           ← alias de amount pour les mois
+//       isGift: false,
+//       gifted: false,
+//       isCommunityGift: false,
+//       streak: 3,          ← mois consécutifs
+//       sender: "pseudo"    ← présent si giftsub
+//     }
+//   }
 //
-// Détection en cascade (ordre de priorité) :
-//   1. gifted / isCommunityGift / bulkGift  → giftsub
-//   2. isResub === true                     → resub
-//   3. streak > 0                           → resub
-//   4. months > 1                           → resub (fallback si isResub absent)
-//   5. rien de tout ça                      → nouveau sub
+// IMPORTANT : SE utilise "amount" pour les mois sur subscriber-latest,
+// PAS "months". Et il n'y a pas de flag "isResub" — on détecte via streak ou amount > 1.
 function detectSubType(evt) {
-  // Giftsub — toujours prioritaire
-  if (evt.gifted || evt.isCommunityGift || evt.bulkGift) return 'giftsub';
-  // Resub — flag explicite SE
-  if (evt.isResub === true) return 'resub';
-  // Resub — streak de mois consécutifs
+  // 1. GiftSub — le sub a été offert par quelqu'un d'autre
+  if (evt.isGift || evt.gifted || evt.isCommunityGift || evt.bulkGift || evt.sender) {
+    return 'giftsub';
+  }
+  // 2. Resub — SE envoie streak > 0 pour les renouvellements
   if (evt.streak && parseInt(evt.streak) > 0) return 'resub';
-  // Resub — fallback: months > 1 (fiable dans 99% des cas)
-  // months=1 peut être un nouveau sub OU un resub du 1er mois,
-  // mais sans aucun autre flag disponible c'est le seul indicateur restant.
-  if (evt.months && parseInt(evt.months) > 1) return 'resub';
-  // Nouveau sub
+  // 3. Resub — fallback sur amount (= mois) ou months
+  const months = parseInt(evt.amount) || parseInt(evt.months) || 0;
+  if (months > 1) return 'resub';
+  // 4. Nouveau sub
   return 'subscriber';
 }
 
 function handleSubscriberEvent(evt) {
   const type = detectSubType(evt);
 
-  // Pour un giftsub, evt.gifted contient le pseudo du bénéficiaire
-  // quand c'est un sub individuel. evt.recipient est l'autre champ possible.
-  const recipientRaw = evt.recipient || (typeof evt.gifted === 'string' ? evt.gifted : '');
+  // SE envoie le bénéficiaire dans evt.sender pour les giftsubs individuels
+  const recipient = evt.recipient || evt.sender || '';
+  // SE utilise "amount" pour les mois sur subscriber-latest
+  const months = parseInt(evt.amount) || parseInt(evt.months) || 1;
 
   queueAlert({
     type,
-    username:  evt.displayName || evt.name || evt.sender || 'Anonyme',
+    username:  evt.displayName || evt.name || 'Anonyme',
     amount:    evt.amount,
-    months:    parseInt(evt.months) || 1,
-    recipient: recipientRaw,
+    months,
+    recipient,
     message:   evt.message,
     currency:  evt.currency,
     avatar:    evt.avatar,
@@ -507,6 +513,7 @@ function handleSubscriberEvent(evt) {
 }
 
 // ── Événements StreamElements ──────────────────
+// SE envoie les données dans obj.detail.listener + obj.detail.event
 window.addEventListener('onEventReceived', function (obj) {
   if (!obj || !obj.detail) return;
 
@@ -514,20 +521,17 @@ window.addEventListener('onEventReceived', function (obj) {
   const listener = detail.listener;
   if (!listener) return;
 
-  // SE envoie parfois detail.event, parfois detail.event.event (loader v2)
-  // On normalise : on prend toujours le niveau le plus profond disponible.
-  let evt = detail.event;
-  if (evt && evt.event && typeof evt.event === 'object') evt = evt.event;
+  const evt = detail.event;
   if (!evt) return;
 
-  // ─ Subscriber (nouveau / resub / giftsub) ─
+  // Subscriber (nouveau sub / resub / giftsub)
   if (listener === 'subscriber-latest') {
     if (getField('enableSub', 'yes') !== 'yes') return;
     handleSubscriberEvent(evt);
     return;
   }
 
-  // ─ Autres événements ─
+  // Autres événements
   const filterMap = {
     'follower-latest': { type: 'follower', enabled: getField('enableFollow', 'yes') },
     'cheer-latest':    { type: 'cheer',    enabled: getField('enableBits',   'yes') },
@@ -552,14 +556,14 @@ window.addEventListener('onEventReceived', function (obj) {
 
   queueAlert({
     type,
-    username:  evt.displayName || evt.name || evt.sender || 'Anonyme',
+    username:  evt.displayName || evt.name || 'Anonyme',
     amount:    evt.amount,
     months:    evt.months,
     recipient: evt.recipient || '',
     message:   evt.message,
     currency:  evt.currency,
     avatar:    evt.avatar,
-    raiders:   evt.raiders,
+    raiders:   evt.raiders || evt.amount,
     streak:    evt.streak,
   });
 });
@@ -573,16 +577,17 @@ window.addEventListener('onWidgetLoad', function (obj) {
 });
 
 // ── Bouton test SE Editor ─────────────────────
-// Tous les tests sub passent par handleSubscriberEvent()
-// avec les bons flags pour tester la même logique qu'en production.
+// SE envoie onTestButtonClick avec le type exact du bouton cliqué.
+// On reproduit le payload réel SE pour chaque cas.
 window.addEventListener('onTestButtonClick', function (obj) {
   const testType = (obj && obj.detail && obj.detail.testType) ? obj.detail.testType : 'follower';
 
+  // Événements non-sub : payload direct
   const simpleTests = {
     follower: { type: 'follower', username: 'TwitchUser42' },
-    cheer:    { type: 'cheer',    username: 'BitsQueen',    amount: 500 },
-    tip:      { type: 'tip',      username: 'DonatorPro',   amount: 10, currency: '€', message: 'Merci pour le stream !' },
-    raid:     { type: 'raid',     username: 'RaidLeader',   amount: 150 },
+    cheer:    { type: 'cheer',    username: 'BitsQueen',  amount: 500 },
+    tip:      { type: 'tip',      username: 'DonatorPro', amount: 10, currency: '€', message: 'Merci pour le stream !' },
+    raid:     { type: 'raid',     username: 'RaidLeader', amount: 150, raiders: 150 },
     host:     { type: 'host',     username: 'FriendStreamer' },
   };
 
@@ -591,11 +596,14 @@ window.addEventListener('onTestButtonClick', function (obj) {
     return;
   }
 
-  // Sous-types sub : flags exacts pour déclencher detectSubType() correctement
+  // Sous-types sub : on reproduit le payload réel SE (amount = mois, streak = mois consécutifs)
   const subTests = {
-    subscriber: { displayName: 'SubFan99',      message: 'Super stream !', isResub: false, streak: 0, gifted: false, months: 1 },
-    resub:      { displayName: 'FidèleViewer', message: 'Déjà 6 mois !',  isResub: true,  streak: 6, gifted: false, months: 6 },
-    giftsub:    { displayName: 'GiftKing',       amount: 1,                 gifted: 'LuckyViewer', recipient: 'LuckyViewer', isResub: false, streak: 0, months: 1 },
+    // Nouveau sub : amount=1, streak=0, pas de sender/isGift
+    subscriber: { displayName: 'SubFan99',      name: 'SubFan99',      amount: 1, streak: 0, isGift: false, gifted: false, message: 'Super stream !' },
+    // Resub : streak > 0 ET amount > 1
+    resub:      { displayName: 'FidèleViewer',  name: 'FidèleViewer',  amount: 6, streak: 6, isGift: false, gifted: false, message: 'Déjà 6 mois !' },
+    // GiftSub : isGift=true + sender = bénéficiaire
+    giftsub:    { displayName: 'GiftKing',       name: 'GiftKing',       amount: 1, streak: 0, isGift: true,  gifted: true,  sender: 'LuckyViewer', recipient: 'LuckyViewer' },
   };
 
   handleSubscriberEvent(subTests[testType] || subTests['subscriber']);
