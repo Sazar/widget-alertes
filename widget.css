@@ -55,6 +55,7 @@ body {
   will-change: transform, opacity;
 }
 
+/* Trait lumineux en haut */
 #alert-box::before {
   content: '';
   position: absolute;
@@ -69,6 +70,7 @@ body {
   opacity: 0.85;
 }
 
+/* Reflet bas subtil */
 #alert-box::after {
   content: '';
   position: absolute;
@@ -205,7 +207,6 @@ body {
   line-height: 1.45;
 }
 
-/* FIX: display:none par défaut, contrôlé par JS */
 #alert-sub-message {
   font-family: var(--font-message, 'Inter'), sans-serif;
   font-size: 12px;
@@ -340,7 +341,7 @@ body {
   100% { transform: translateY(0) scale(1); }
 }
 
-/* FIX: animate-out-bounce avait alertFadeOut — keyframe dédiée */
+/* FIX: bounce-out avait alertFadeOut — nouvelle keyframe dédiée */
 @keyframes alertBounceOut {
   0%   { opacity: 1; transform: translateY(0) scale(1); }
   30%  { transform: translateY(-10px) scale(1.03); }
@@ -351,7 +352,6 @@ body {
   from { opacity: 0; transform: perspective(600px) rotateX(-90deg) translateY(40px); }
   to   { opacity: 1; transform: perspective(600px) rotateX(0) translateY(0); }
 }
-/* FIX: animate-out-flip avait alertFadeOut — keyframe dédiée */
 @keyframes alertFlipOut {
   from { opacity: 1; transform: perspective(600px) rotateX(0); }
   to   { opacity: 0; transform: perspective(600px) rotateX(90deg); }
@@ -385,7 +385,7 @@ body {
 .animate-out-slideright { animation: alertSlideRightOut 0.4s ease-in both; }
 .animate-out-zoom       { animation: alertZoomOut    0.4s ease-in both; }
 .animate-out-fade       { animation: alertFadeOut    0.4s ease both; }
-/* FIX: bounce-out et flip-out corrigés */
+/* FIX: bounce-out et flip-out utilisaient alertFadeOut → corrections */
 .animate-out-bounce     { animation: alertBounceOut  0.5s ease-in both; }
 .animate-out-flip       { animation: alertFlipOut    0.4s ease-in both; }
 
@@ -436,7 +436,7 @@ body {
   --border-color:     rgba(255,255,255,0.18);
 }
 
-/* Nouveau thème Gold */
+/* Nouveau : Gold */
 .theme-gold {
   --accent-color:     #f0a500;
   --accent-secondary: #ffe168;
@@ -445,7 +445,7 @@ body {
   --border-color:     rgba(240,165,0,0.5);
 }
 
-/* Nouveau thème Ocean */
+/* Nouveau : Ocean */
 .theme-ocean {
   --accent-color:     #0088ff;
   --accent-secondary: #00d4ff;

@@ -25,13 +25,13 @@ const soundEl      = document.getElementById('alert-sound');
 const confettiC    = document.getElementById('confetti-container');
 const canvas       = document.getElementById('particles-canvas');
 
-// ── Utilitaires ─────────────────────────────
+// ── Utilitaires ───────────────────────────────
 function getField(key, fallback) {
   const v = fieldData[key];
   return (v !== undefined && v !== '') ? v : fallback;
 }
 
-// FIX: sanitisation XSS — évite l'injection HTML dans username/message
+// FIX: sanitisation XSS
 function sanitize(str) {
   const div = document.createElement('div');
   div.textContent = String(str);
@@ -62,13 +62,11 @@ function applyTheme() {
   wrapper.style.setProperty('--color-username',      getField('colorUsername', '#ffffff'));
   wrapper.style.setProperty('--color-message',       getField('colorMessage', 'rgba(255,255,255,0.88)'));
 
-  // Position
   const pos = getField('position', 'bottom-center');
   const posClasses = ['pos-top-left','pos-top-center','pos-top-right','pos-bottom-left','pos-bottom-right','pos-center'];
   posClasses.forEach(c => wrapper.classList.remove(c));
   if (pos !== 'bottom-center') wrapper.classList.add('pos-' + pos);
 
-  // Largeur
   wrapper.style.width = getField('widgetWidth', '680') + 'px';
 }
 
@@ -131,7 +129,7 @@ function launchConfetti(count = 60) {
   }
 }
 
-// ── Son ─────────────────────────────────────────
+// ── Son ───────────────────────────────────────
 function playSound(url, volume = 0.7) {
   if (!url) return;
   soundEl.src    = url;
@@ -141,7 +139,7 @@ function playSound(url, volume = 0.7) {
   soundEl.play().catch(() => {});
 }
 
-// ── Config par type d'alerte ───────────────────
+// ── Config par type d'alerte ──────────────────
 const TYPE_CONFIG = {
   follower:   { emoji: '💜', label: 'Follower',    labelEn: 'Follower' },
   subscriber: { emoji: '⭐', label: 'Nouveau Sub', labelEn: 'New Sub' },
@@ -157,7 +155,7 @@ function getTypeConfig(type) {
   return TYPE_CONFIG[type] || { emoji: '🔔', label: 'Alerte', labelEn: 'Alert' };
 }
 
-// ── Construction du message ─────────────────────
+// ── Construction du message ───────────────────
 function buildAlertContent(data) {
   const lang  = getField('language', 'fr');
   const type  = data.type;
@@ -180,7 +178,7 @@ function buildAlertContent(data) {
       if (data.message) subMsgTx = '"' + sanitize(data.message) + '"';
       break;
     case 'resub': {
-      // FIX: priorité à data.months (fourni par SE), puis data.amount
+      // FIX: priorité à data.months (fourni par SE evt.months), puis data.amount
       const months = data.months || data.amount || 1;
       mainMsg = getField('msgResub', '{user} resub x{months} mois !')
         .replace('{user}', name)
@@ -217,7 +215,7 @@ function buildAlertContent(data) {
       break;
     }
     case 'raid': {
-      // FIX: SE envoie evt.amount pour les raiders
+      // FIX: SE envoie evt.amount pour les raiders, pas evt.raiders
       const raiders = data.amount || data.raiders || 0;
       mainMsg = getField('msgRaid', '{user} raid avec {count} raiders !')
         .replace('{user}', name)
@@ -236,7 +234,7 @@ function buildAlertContent(data) {
   return { name, mainMsg, subMsgTx, emoji: emojiOverride || cfg.emoji };
 }
 
-// ── Couleurs par type ──────────────────────────
+// ── Couleurs par type ─────────────────────────
 function applyTypeColors(type) {
   const colorMap = {
     follower:   getField('colorFollow', ''),
@@ -266,20 +264,21 @@ function setTypeBadge(type) {
     typeBadge.style.display = 'none';
     return;
   }
-  const cfg = getTypeConfig(type);
+  const cfg  = getTypeConfig(type);
   const lang = getField('language', 'fr');
-  typeBadge.textContent  = lang === 'fr' ? cfg.label : cfg.labelEn;
+  typeBadge.textContent   = lang === 'fr' ? cfg.label : cfg.labelEn;
   typeBadge.style.display = 'block';
 }
 
-// ── Progress bar ─────────────────────────────
+// ── Progress bar ──────────────────────────────
 let progressRafId = null;
 function startProgressBar(durationMs) {
   if (progressRafId) cancelAnimationFrame(progressRafId);
   progressFill.style.transition = 'none';
   progressFill.style.transform  = 'scaleX(1)';
+  // Force reflow
   void progressFill.offsetWidth;
-  // FIX: requestAnimationFrame pour lancer la transition proprement
+  // FIX: rAF pour lancer la transition proprement
   progressRafId = requestAnimationFrame(() => {
     progressFill.style.transition = `transform ${durationMs / 1000}s linear`;
     progressFill.style.transform  = 'scaleX(0)';
@@ -301,7 +300,7 @@ function showAlert(data) {
   const accent    = cs.getPropertyValue('--accent-color').trim() || '#9146ff';
   const secondary = cs.getPropertyValue('--accent-secondary').trim() || '#bf94ff';
 
-  // Remplissage DOM via textContent (XSS-safe)
+  // Remplissage DOM
   usernameEl.textContent = name;
   messageEl.textContent  = mainMsg;
   if (subMsgTx) {
@@ -312,7 +311,6 @@ function showAlert(data) {
     subMsgEl.style.display = 'none';
   }
 
-  // Badge type
   setTypeBadge(type);
 
   // Icone
@@ -329,26 +327,21 @@ function showAlert(data) {
     iconEl.classList.remove('avatar-mode');
   }
 
-  // Couleur selon type
   applyTypeColors(type);
 
   // Ring actif
   iconRing.classList.add('active');
 
-  // Affichage
   wrapper.classList.remove('hidden');
   const inClass  = 'animate-in-' + animIn;
   const outClass = 'animate-out-' + animOut;
   box.className  = '';
   box.classList.add(inClass);
 
-  // Pulse glow
   if (getField('pulseGlow', 'yes') === 'yes') box.classList.add('pulse-glow');
 
-  // Particules
   launchParticles(accent, secondary);
 
-  // Confetti selon type
   if (['giftsub', 'tip', 'raid'].includes(type)) launchConfetti(50);
   if (type === 'follower' && getField('confettiOnFollow', 'no') === 'yes') launchConfetti(30);
   if (['subscriber', 'resub'].includes(type) && getField('confettiOnSub', 'no') === 'yes') launchConfetti(40);
@@ -357,7 +350,6 @@ function showAlert(data) {
     if (parseInt(data.amount) >= threshold) launchConfetti(80);
   }
 
-  // Shake icône pour bits
   if (type === 'cheer' && getField('shakeIcon', 'yes') === 'yes') {
     setTimeout(() => {
       iconEl.classList.add('icon-shake');
@@ -365,7 +357,6 @@ function showAlert(data) {
     }, 200);
   }
 
-  // Son
   const soundMap = {
     follower:   [getField('soundFollow', ''),   getField('soundVolumeFollow', '0.7')],
     subscriber: [getField('soundSub', ''),      getField('soundVolumeSub', '0.8')],
@@ -379,10 +370,8 @@ function showAlert(data) {
   const [sUrl, sVol] = soundMap[type] || ['', '0.7'];
   if (sUrl) playSound(sUrl, sVol);
 
-  // Barre de progression
   startProgressBar(duration);
 
-  // Masquage après durée
   const outDuration = 500;
   setTimeout(() => {
     iconRing.classList.remove('active');
@@ -419,7 +408,7 @@ function queueAlert(data) {
   processQueue();
 }
 
-// ── Événements StreamElements ────────────────────
+// ── Événements StreamElements ─────────────────
 window.addEventListener('onEventReceived', function (obj) {
   const data = obj && obj.detail;
   if (!data || !data.listener) return;
@@ -442,7 +431,6 @@ window.addEventListener('onEventReceived', function (obj) {
 
   let type = mapped.type;
 
-  // Détection resub / giftsub
   if (listener === 'subscriber-latest') {
     if (evt.gifted || evt.isCommunityGift) {
       type = 'giftsub';
@@ -451,13 +439,11 @@ window.addEventListener('onEventReceived', function (obj) {
     }
   }
 
-  // Filtre montant minimum bits
   if (type === 'cheer') {
     const minBits = parseInt(getField('minBits', '1')) || 1;
     if (parseInt(evt.amount) < minBits) return;
   }
 
-  // Filtre montant minimum tips
   if (type === 'tip') {
     const minTip = parseFloat(getField('minTip', '0')) || 0;
     if (parseFloat(evt.amount) < minTip) return;
@@ -476,7 +462,7 @@ window.addEventListener('onEventReceived', function (obj) {
   });
 });
 
-// ── Chargement des champs SE ────────────────────
+// ── Chargement des champs SE ──────────────────
 window.addEventListener('onWidgetLoad', function (obj) {
   if (obj && obj.detail && obj.detail.fieldData) {
     fieldData = obj.detail.fieldData;
@@ -484,7 +470,7 @@ window.addEventListener('onWidgetLoad', function (obj) {
   applyTheme();
 });
 
-// ── Bouton test SE Editor ──────────────────────
+// ── Bouton test SE Editor ─────────────────────
 window.addEventListener('onTestButtonClick', function (obj) {
   const testType = (obj && obj.detail && obj.detail.testType) ? obj.detail.testType : 'follower';
   const testData = {
@@ -497,6 +483,6 @@ window.addEventListener('onTestButtonClick', function (obj) {
     raid:       { type: 'raid',       username: 'RaidLeader',    amount: 150 },
     host:       { type: 'host',       username: 'FriendStreamer' },
   };
-  // FIX: fallback sur 'follower' si testType inconnu
+  // FIX: fallback sur follower si testType inconnu
   queueAlert(testData[testType] || testData['follower']);
 });
