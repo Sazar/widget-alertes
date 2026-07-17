@@ -382,14 +382,14 @@
 
   "_section_colors": { "type": "hidden", "value": "──── COULEURS PAR TYPE ────" },
 
-  "colorFollow":  { "type": "colorpicker", "label": "Couleur Follower",  "value": "" },
-  "colorSub":     { "type": "colorpicker", "label": "Couleur Sub",       "value": "" },
-  "colorResub":   { "type": "colorpicker", "label": "Couleur Resub",     "value": "" },
-  "colorGiftSub": { "type": "colorpicker", "label": "Couleur GiftSub",   "value": "" },
-  "colorBits":    { "type": "colorpicker", "label": "Couleur Bits",      "value": "" },
-  "colorTip":     { "type": "colorpicker", "label": "Couleur Donation",  "value": "" },
-  "colorRaid":    { "type": "colorpicker", "label": "Couleur Raid",      "value": "" },
-  "colorHost":    { "type": "colorpicker", "label": "Couleur Host",      "value": "" },
+  "colorFollow":  { "type": "text", "label": "Couleur Follower (ex: #9146ff — vide = thème)",  "value": "" },
+  "colorSub":     { "type": "text", "label": "Couleur Sub (ex: #ffcc00 — vide = thème)",       "value": "" },
+  "colorResub":   { "type": "text", "label": "Couleur Resub (ex: #ffaa00 — vide = thème)",     "value": "" },
+  "colorGiftSub": { "type": "text", "label": "Couleur GiftSub (ex: #ff69b4 — vide = thème)",   "value": "" },
+  "colorBits":    { "type": "text", "label": "Couleur Bits (ex: #00d4ff — vide = thème)",      "value": "" },
+  "colorTip":     { "type": "text", "label": "Couleur Donation (ex: #00ff99 — vide = thème)",  "value": "" },
+  "colorRaid":    { "type": "text", "label": "Couleur Raid (ex: #ff4500 — vide = thème)",      "value": "" },
+  "colorHost":    { "type": "text", "label": "Couleur Host (ex: #1e90ff — vide = thème)",      "value": "" },
 
   "_section_sounds": { "type": "hidden", "value": "──── SONS ────" },
 
