@@ -6,7 +6,7 @@
   <title>Widget Alertes Twitch</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Montserrat:wght@700;900&family=Poppins:wght@400;600;700;800&family=Orbitron:wght@700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Montserrat:wght@700;900&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -16,8 +16,12 @@
   <!-- Bandeau d'alerte -->
   <div id="alert-box">
 
+    <!-- Badge type d'alerte -->
+    <div id="alert-type-badge"></div>
+
     <!-- Icone / Avatar -->
     <div id="alert-icon-wrap">
+      <div id="alert-icon-ring"></div>
       <div id="alert-icon">⚡</div>
       <canvas id="particles-canvas"></canvas>
     </div>
