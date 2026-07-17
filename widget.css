@@ -79,7 +79,7 @@ body {
   background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
 }
 
-/* ── Badge type (nouveau) ──────────────────── */
+/* ── Badge type ────────────────────────────── */
 #alert-type-badge {
   position: absolute;
   top: 10px;
@@ -94,7 +94,7 @@ body {
   display: none;
 }
 
-/* ── Ring d'icone (nouveau) ────────────────── */
+/* ── Ring d'icone ──────────────────────────── */
 #alert-icon-wrap {
   position: relative;
   flex-shrink: 0;
@@ -224,23 +224,40 @@ body {
 /* ── Barre de progression ──────────────────── */
 #alert-progress-bar {
   position: absolute;
-  bottom: 0; left: 0; right: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
   height: 3px;
   background: rgba(255,255,255,0.06);
+  /* Le border-radius suit les coins bas de la box */
   border-radius: 0 0 var(--border-radius, 16px) var(--border-radius, 16px);
   overflow: hidden;
+  /* Masqué par défaut — JS gère la visibilité via showProgressBar */
+  display: none;
+}
+
+#alert-progress-bar.visible {
+  display: block;
 }
 
 #alert-progress-fill {
   height: 100%;
   width: 100%;
   background: linear-gradient(90deg,
-    var(--accent-color, #9146ff),
-    var(--accent-secondary, #00d4ff),
-    var(--accent-color, #9146ff)
+    var(--accent-color, #9146ff) 0%,
+    var(--accent-secondary, #00d4ff) 50%,
+    var(--accent-color, #9146ff) 100%
   );
   background-size: 200% 100%;
   transform-origin: left center;
+  transform: scaleX(1);
+  /* Le shimmer en mouvement sur la barre */
+  animation: progressShimmer 1.8s linear infinite;
+}
+
+@keyframes progressShimmer {
+  0%   { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
 }
 
 /* ── Glow background ───────────────────────── */
@@ -341,7 +358,6 @@ body {
   100% { transform: translateY(0) scale(1); }
 }
 
-/* FIX: bounce-out avait alertFadeOut — nouvelle keyframe dédiée */
 @keyframes alertBounceOut {
   0%   { opacity: 1; transform: translateY(0) scale(1); }
   30%  { transform: translateY(-10px) scale(1.03); }
@@ -380,14 +396,13 @@ body {
 .animate-in-bounce     { animation: alertBounceIn   0.75s cubic-bezier(0.22,1,0.36,1) both; }
 .animate-in-flip       { animation: alertFlipIn     0.55s cubic-bezier(0.34,1.56,0.64,1) both; }
 
-.animate-out-slideup    { animation: alertSlideDown    0.45s ease-in both; }
-.animate-out-slideleft  { animation: alertSlideLeftOut 0.4s  ease-in both; }
-.animate-out-slideright { animation: alertSlideRightOut 0.4s ease-in both; }
-.animate-out-zoom       { animation: alertZoomOut    0.4s ease-in both; }
-.animate-out-fade       { animation: alertFadeOut    0.4s ease both; }
-/* FIX: bounce-out et flip-out utilisaient alertFadeOut → corrections */
-.animate-out-bounce     { animation: alertBounceOut  0.5s ease-in both; }
-.animate-out-flip       { animation: alertFlipOut    0.4s ease-in both; }
+.animate-out-slideup    { animation: alertSlideDown     0.45s ease-in both; }
+.animate-out-slideleft  { animation: alertSlideLeftOut  0.4s  ease-in both; }
+.animate-out-slideright { animation: alertSlideRightOut 0.4s  ease-in both; }
+.animate-out-zoom       { animation: alertZoomOut       0.4s  ease-in both; }
+.animate-out-fade       { animation: alertFadeOut       0.4s  ease both; }
+.animate-out-bounce     { animation: alertBounceOut     0.5s  ease-in both; }
+.animate-out-flip       { animation: alertFlipOut       0.4s  ease-in both; }
 
 .icon-shake { animation: iconShake 0.7s ease; }
 .pulse-glow { animation: pulseGlow 1.2s ease-in-out infinite; }
@@ -436,7 +451,6 @@ body {
   --border-color:     rgba(255,255,255,0.18);
 }
 
-/* Nouveau : Gold */
 .theme-gold {
   --accent-color:     #f0a500;
   --accent-secondary: #ffe168;
@@ -445,7 +459,6 @@ body {
   --border-color:     rgba(240,165,0,0.5);
 }
 
-/* Nouveau : Ocean */
 .theme-ocean {
   --accent-color:     #0088ff;
   --accent-secondary: #00d4ff;
@@ -484,4 +497,5 @@ body {
   .icon-shake { animation: none !important; }
   .pulse-glow { animation: none !important; }
   #alert-icon-ring { animation: none !important; }
+  #alert-progress-fill { animation: none !important; }
 }

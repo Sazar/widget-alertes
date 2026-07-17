@@ -1,5 +1,5 @@
 {
-  "_section_general": { "type": "hidden", "value": "──── GÉNÉRAL ────" },
+  "_section_general": { "type": "hidden", "value": "───── GÉNÉRAL ─────" },
 
   "alertDuration": {
     "type": "number",
@@ -52,7 +52,7 @@
     }
   },
 
-  "_section_theme": { "type": "hidden", "value": "──── THÈME ────" },
+  "_section_theme": { "type": "hidden", "value": "───── THÈME ─────" },
 
   "theme": {
     "type": "dropdown",
@@ -121,6 +121,17 @@
     "options": { "yes": "Oui", "no": "Non" }
   },
 
+  "_section_progressbar": { "type": "hidden", "value": "───── BARRE DE TEMPS ─────" },
+
+  "showProgressBar": {
+    "type": "dropdown",
+    "label": "Afficher la barre de progression",
+    "value": "yes",
+    "options": { "yes": "Oui", "no": "Non" }
+  },
+
+  "_section_particles": { "type": "hidden", "value": "───── EFFETS ─────" },
+
   "showParticles": {
     "type": "dropdown",
     "label": "Particules autour de l'icône",
@@ -173,7 +184,7 @@
     "options": { "yes": "Oui", "no": "Non" }
   },
 
-  "_section_font": { "type": "hidden", "value": "──── TEXTE ────" },
+  "_section_font": { "type": "hidden", "value": "───── TEXTE ─────" },
 
   "fontTitle": {
     "type": "dropdown",
@@ -213,7 +224,7 @@
     "options": { "yes": "Oui", "no": "Non" }
   },
 
-  "_section_animation": { "type": "hidden", "value": "──── ANIMATION ────" },
+  "_section_animation": { "type": "hidden", "value": "───── ANIMATION ─────" },
 
   "animationIn": {
     "type": "dropdown",
@@ -252,19 +263,19 @@
     "options": { "yes": "Oui", "no": "Non" }
   },
 
-  "_section_events": { "type": "hidden", "value": "──── ÉVÉNEMENTS ────" },
+  "_section_events": { "type": "hidden", "value": "───── ÉVÉNEMENTS ─────" },
 
-  "enableFollow": { "type": "dropdown", "label": "Alertes Followers",            "value": "yes", "options": { "yes": "Oui", "no": "Non" } },
+  "enableFollow": { "type": "dropdown", "label": "Alertes Followers",                "value": "yes", "options": { "yes": "Oui", "no": "Non" } },
   "enableSub":    { "type": "dropdown", "label": "Alertes Subs / Resubs / GiftSubs", "value": "yes", "options": { "yes": "Oui", "no": "Non" } },
-  "enableBits":   { "type": "dropdown", "label": "Alertes Bits / Cheers",        "value": "yes", "options": { "yes": "Oui", "no": "Non" } },
-  "enableTip":    { "type": "dropdown", "label": "Alertes Donations (Tips)",     "value": "yes", "options": { "yes": "Oui", "no": "Non" } },
-  "enableRaid":   { "type": "dropdown", "label": "Alertes Raids",                "value": "yes", "options": { "yes": "Oui", "no": "Non" } },
-  "enableHost":   { "type": "dropdown", "label": "Alertes Hosts",                "value": "yes", "options": { "yes": "Oui", "no": "Non" } },
+  "enableBits":   { "type": "dropdown", "label": "Alertes Bits / Cheers",            "value": "yes", "options": { "yes": "Oui", "no": "Non" } },
+  "enableTip":    { "type": "dropdown", "label": "Alertes Donations (Tips)",         "value": "yes", "options": { "yes": "Oui", "no": "Non" } },
+  "enableRaid":   { "type": "dropdown", "label": "Alertes Raids",                    "value": "yes", "options": { "yes": "Oui", "no": "Non" } },
+  "enableHost":   { "type": "dropdown", "label": "Alertes Hosts",                    "value": "yes", "options": { "yes": "Oui", "no": "Non" } },
 
   "minBits": { "type": "number", "label": "Montant minimum bits",     "value": 1, "min": 1, "step": 1 },
   "minTip":  { "type": "number", "label": "Montant minimum donation", "value": 0, "min": 0, "step": 1 },
 
-  "_section_icons": { "type": "hidden", "value": "──── ICÔNES ────" },
+  "_section_icons": { "type": "hidden", "value": "───── ICÔNES ─────" },
 
   "iconFollow":  { "type": "text", "label": "Icône Follower",  "value": "💜" },
   "iconSub":     { "type": "text", "label": "Icône Sub",       "value": "⭐" },
@@ -275,7 +286,7 @@
   "iconRaid":    { "type": "text", "label": "Icône Raid",      "value": "⚔️" },
   "iconHost":    { "type": "text", "label": "Icône Host",      "value": "📡" },
 
-  "_section_messages": { "type": "hidden", "value": "──── MESSAGES ────" },
+  "_section_messages": { "type": "hidden", "value": "───── MESSAGES ─────" },
 
   "msgFollow":  { "type": "text", "label": "Message Follower ({user})",           "value": "{user} te follow ! 💜" },
   "msgSub":     { "type": "text", "label": "Message Sub ({user})",                "value": "{user} vient de sub !" },
@@ -286,33 +297,33 @@
   "msgRaid":    { "type": "text", "label": "Message Raid ({user}, {count})",      "value": "{user} raid avec {count} raiders !" },
   "msgHost":    { "type": "text", "label": "Message Host ({user})",               "value": "{user} host le stream !" },
 
-  "_section_colors": { "type": "hidden", "value": "──── COULEURS PAR TYPE ────" },
+  "_section_colors": { "type": "hidden", "value": "───── COULEURS PAR TYPE ─────" },
 
-  "useColorFollow":  { "type": "dropdown", "label": "Couleur custom Follower",  "value": "no",  "options": { "yes": "Oui", "no": "Non (thème)" } },
+  "useColorFollow":  { "type": "dropdown", "label": "Couleur custom Follower",  "value": "no", "options": { "yes": "Oui", "no": "Non (thème)" } },
   "colorFollow":     { "type": "colorpicker", "label": "↳ Couleur Follower",    "value": "#9146ff" },
 
-  "useColorSub":     { "type": "dropdown", "label": "Couleur custom Sub",       "value": "no",  "options": { "yes": "Oui", "no": "Non (thème)" } },
+  "useColorSub":     { "type": "dropdown", "label": "Couleur custom Sub",       "value": "no", "options": { "yes": "Oui", "no": "Non (thème)" } },
   "colorSub":        { "type": "colorpicker", "label": "↳ Couleur Sub",         "value": "#ffcc00" },
 
-  "useColorResub":   { "type": "dropdown", "label": "Couleur custom Resub",     "value": "no",  "options": { "yes": "Oui", "no": "Non (thème)" } },
+  "useColorResub":   { "type": "dropdown", "label": "Couleur custom Resub",     "value": "no", "options": { "yes": "Oui", "no": "Non (thème)" } },
   "colorResub":      { "type": "colorpicker", "label": "↳ Couleur Resub",       "value": "#ffaa00" },
 
-  "useColorGiftSub": { "type": "dropdown", "label": "Couleur custom GiftSub",   "value": "no",  "options": { "yes": "Oui", "no": "Non (thème)" } },
+  "useColorGiftSub": { "type": "dropdown", "label": "Couleur custom GiftSub",   "value": "no", "options": { "yes": "Oui", "no": "Non (thème)" } },
   "colorGiftSub":    { "type": "colorpicker", "label": "↳ Couleur GiftSub",     "value": "#ff69b4" },
 
-  "useColorBits":    { "type": "dropdown", "label": "Couleur custom Bits",      "value": "no",  "options": { "yes": "Oui", "no": "Non (thème)" } },
+  "useColorBits":    { "type": "dropdown", "label": "Couleur custom Bits",      "value": "no", "options": { "yes": "Oui", "no": "Non (thème)" } },
   "colorBits":       { "type": "colorpicker", "label": "↳ Couleur Bits",        "value": "#00d4ff" },
 
-  "useColorTip":     { "type": "dropdown", "label": "Couleur custom Donation",  "value": "no",  "options": { "yes": "Oui", "no": "Non (thème)" } },
+  "useColorTip":     { "type": "dropdown", "label": "Couleur custom Donation",  "value": "no", "options": { "yes": "Oui", "no": "Non (thème)" } },
   "colorTip":        { "type": "colorpicker", "label": "↳ Couleur Donation",    "value": "#00ff99" },
 
-  "useColorRaid":    { "type": "dropdown", "label": "Couleur custom Raid",      "value": "no",  "options": { "yes": "Oui", "no": "Non (thème)" } },
+  "useColorRaid":    { "type": "dropdown", "label": "Couleur custom Raid",      "value": "no", "options": { "yes": "Oui", "no": "Non (thème)" } },
   "colorRaid":       { "type": "colorpicker", "label": "↳ Couleur Raid",        "value": "#ff4500" },
 
-  "useColorHost":    { "type": "dropdown", "label": "Couleur custom Host",      "value": "no",  "options": { "yes": "Oui", "no": "Non (thème)" } },
+  "useColorHost":    { "type": "dropdown", "label": "Couleur custom Host",      "value": "no", "options": { "yes": "Oui", "no": "Non (thème)" } },
   "colorHost":       { "type": "colorpicker", "label": "↳ Couleur Host",        "value": "#1e90ff" },
 
-  "_section_sounds": { "type": "hidden", "value": "──── SONS ────" },
+  "_section_sounds": { "type": "hidden", "value": "───── SONS ─────" },
 
   "soundFollow":        { "type": "text",   "label": "Son Follower (URL)",      "value": "" },
   "soundVolumeFollow":  { "type": "slider", "label": "Volume Follower (0–100)", "value": 70,  "min": 0, "max": 100, "step": 1 },

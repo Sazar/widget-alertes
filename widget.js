@@ -20,6 +20,7 @@ const typeBadge    = document.getElementById('alert-type-badge');
 const usernameEl   = document.getElementById('alert-username');
 const messageEl    = document.getElementById('alert-message');
 const subMsgEl     = document.getElementById('alert-sub-message');
+const progressBar  = document.getElementById('alert-progress-bar');
 const progressFill = document.getElementById('alert-progress-fill');
 const soundEl      = document.getElementById('alert-sound');
 const confettiC    = document.getElementById('confetti-container');
@@ -245,8 +246,6 @@ function buildAlertContent(data) {
 }
 
 // ── Couleurs par type ─────────────────────────
-// Chaque type a un toggle useColorXxx (dropdown oui/non) + un colorpicker colorXxx.
-// Si le toggle est "yes", on applique la couleur du picker ; sinon on revient au thème.
 function applyTypeColors(type) {
   const toggleMap = {
     follower:   'useColorFollow',
@@ -295,15 +294,41 @@ function setTypeBadge(type) {
 }
 
 // ── Progress bar ──────────────────────────────
+// Technique : on reset scaleX(1) sans transition dans un premier rAF,
+// puis on lance la transition shrink dans le rAF suivant.
+// Ça garantit que le navigateur a bien rendu le reset avant de démarrer.
 let progressRafId = null;
+
 function startProgressBar(durationMs) {
+  // Cacher la barre si l'option est désactivée
+  if (getField('showProgressBar', 'yes') !== 'yes') {
+    progressBar.classList.remove('visible');
+    return;
+  }
+
+  progressBar.classList.add('visible');
+
+  // Annuler tout rAF en cours
   if (progressRafId) cancelAnimationFrame(progressRafId);
+
+  // Étape 1 : reset instantané (sans transition)
   progressFill.style.transition = 'none';
   progressFill.style.transform  = 'scaleX(1)';
+
+  // Étape 2 : dans le rAF suivant, lancer la transition de shrink
   progressRafId = requestAnimationFrame(() => {
-    progressFill.style.transition = `transform ${durationMs / 1000}s linear`;
-    progressFill.style.transform  = 'scaleX(0)';
+    progressRafId = requestAnimationFrame(() => {
+      progressFill.style.transition = `transform ${durationMs / 1000}s linear`;
+      progressFill.style.transform  = 'scaleX(0)';
+    });
   });
+}
+
+function stopProgressBar() {
+  if (progressRafId) cancelAnimationFrame(progressRafId);
+  progressBar.classList.remove('visible');
+  progressFill.style.transition = 'none';
+  progressFill.style.transform  = 'scaleX(1)';
 }
 
 // ── Affichage d'une alerte ─────────────────────
@@ -386,11 +411,13 @@ function showAlert(data) {
   const [sUrl, sVol] = soundMap[type] || ['', '70'];
   if (sUrl) playSound(sUrl, sVol);
 
+  // Lance la barre (visible seulement si showProgressBar === 'yes')
   startProgressBar(duration);
 
   const outDuration = 500;
   setTimeout(() => {
     iconRing.classList.remove('active');
+    stopProgressBar();
     box.classList.remove(inClass, 'pulse-glow');
     box.classList.add(outClass);
     setTimeout(() => {
@@ -422,7 +449,7 @@ function queueAlert(data) {
   processQueue();
 }
 
-// ── Événements StreamElements ─────────────────
+// ── Événements StreamElements ──────────────────
 window.addEventListener('onEventReceived', function (obj) {
   const data = obj && obj.detail;
   if (!data || !data.listener) return;
