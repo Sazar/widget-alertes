@@ -358,12 +358,6 @@
     "step": 1
   },
 
-  "currency": {
-    "type": "text",
-    "label": "Devise par défaut",
-    "value": "€"
-  },
-
   "_section_icons": { "type": "hidden", "value": "──── ICÔNES ────" },
 
   "iconFollow":  { "type": "text", "label": "Icône Follower",  "value": "💜" },
@@ -382,7 +376,7 @@
   "msgResub":   { "type": "text", "label": "Message Resub ({user}, {months})",       "value": "{user} resub x{months} mois !" },
   "msgGiftSub": { "type": "text", "label": "Message GiftSub ({user}, {count})",      "value": "{user} offre {count} sub(s) !" },
   "msgBits":    { "type": "text", "label": "Message Bits ({user}, {bits})",          "value": "{user} envoie {bits} bits !" },
-  "msgTip":     { "type": "text", "label": "Message Donation ({user}, {amount}, {currency})", "value": "{user} donne {amount}{currency} !" },
+  "msgTip":     { "type": "text", "label": "Message Donation ({user}, {amount})",    "value": "{user} donne {amount} !" },
   "msgRaid":    { "type": "text", "label": "Message Raid ({user}, {count})",         "value": "{user} raid avec {count} raiders !" },
   "msgHost":    { "type": "text", "label": "Message Host ({user})",                  "value": "{user} host le stream !" },
 
