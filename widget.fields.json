@@ -70,23 +70,9 @@
     }
   },
 
-  "accentColor": {
-    "type": "colorpicker",
-    "label": "Couleur accent (thème custom)",
-    "value": "#9146ff"
-  },
-
-  "accentSecondary": {
-    "type": "colorpicker",
-    "label": "Couleur accent secondaire (thème custom)",
-    "value": "#bf94ff"
-  },
-
-  "glowColor": {
-    "type": "colorpicker",
-    "label": "Couleur glow (thème custom)",
-    "value": "#9146ff"
-  },
+  "accentColor":     { "type": "colorpicker", "label": "Couleur accent (thème custom)",            "value": "#9146ff" },
+  "accentSecondary": { "type": "colorpicker", "label": "Couleur accent secondaire (thème custom)", "value": "#bf94ff" },
+  "glowColor":       { "type": "colorpicker", "label": "Couleur glow (thème custom)",              "value": "#9146ff" },
 
   "glowOpacity": {
     "type": "slider",
@@ -97,11 +83,7 @@
     "step": 1
   },
 
-  "bgColor": {
-    "type": "colorpicker",
-    "label": "Couleur fond (thème custom)",
-    "value": "#0f0a1e"
-  },
+  "bgColor": { "type": "colorpicker", "label": "Couleur fond (thème custom)",    "value": "#0f0a1e" },
 
   "bgOpacity": {
     "type": "slider",
@@ -112,11 +94,7 @@
     "step": 1
   },
 
-  "borderColor": {
-    "type": "colorpicker",
-    "label": "Couleur bordure (thème custom)",
-    "value": "#9146ff"
-  },
+  "borderColor": { "type": "colorpicker", "label": "Couleur bordure (thème custom)", "value": "#9146ff" },
 
   "borderOpacity": {
     "type": "slider",
@@ -222,35 +200,11 @@
     }
   },
 
-  "fontSizeUsername": {
-    "type": "number",
-    "label": "Taille police nom (px)",
-    "value": 22,
-    "min": 12,
-    "max": 40,
-    "step": 1
-  },
+  "fontSizeUsername": { "type": "number", "label": "Taille police nom (px)",     "value": 22, "min": 12, "max": 40, "step": 1 },
+  "fontSizeMessage":  { "type": "number", "label": "Taille police message (px)", "value": 14, "min": 10, "max": 24, "step": 1 },
 
-  "fontSizeMessage": {
-    "type": "number",
-    "label": "Taille police message (px)",
-    "value": 14,
-    "min": 10,
-    "max": 24,
-    "step": 1
-  },
-
-  "colorUsername": {
-    "type": "colorpicker",
-    "label": "Couleur nom d'utilisateur",
-    "value": "#ffffff"
-  },
-
-  "colorMessage": {
-    "type": "colorpicker",
-    "label": "Couleur message",
-    "value": "#dddddd"
-  },
+  "colorUsername": { "type": "colorpicker", "label": "Couleur nom d'utilisateur", "value": "#ffffff" },
+  "colorMessage":  { "type": "colorpicker", "label": "Couleur message",           "value": "#dddddd" },
 
   "showAvatar": {
     "type": "dropdown",
@@ -300,63 +254,15 @@
 
   "_section_events": { "type": "hidden", "value": "──── ÉVÉNEMENTS ────" },
 
-  "enableFollow": {
-    "type": "dropdown",
-    "label": "Alertes Followers",
-    "value": "yes",
-    "options": { "yes": "Oui", "no": "Non" }
-  },
+  "enableFollow": { "type": "dropdown", "label": "Alertes Followers",            "value": "yes", "options": { "yes": "Oui", "no": "Non" } },
+  "enableSub":    { "type": "dropdown", "label": "Alertes Subs / Resubs / GiftSubs", "value": "yes", "options": { "yes": "Oui", "no": "Non" } },
+  "enableBits":   { "type": "dropdown", "label": "Alertes Bits / Cheers",        "value": "yes", "options": { "yes": "Oui", "no": "Non" } },
+  "enableTip":    { "type": "dropdown", "label": "Alertes Donations (Tips)",     "value": "yes", "options": { "yes": "Oui", "no": "Non" } },
+  "enableRaid":   { "type": "dropdown", "label": "Alertes Raids",                "value": "yes", "options": { "yes": "Oui", "no": "Non" } },
+  "enableHost":   { "type": "dropdown", "label": "Alertes Hosts",                "value": "yes", "options": { "yes": "Oui", "no": "Non" } },
 
-  "enableSub": {
-    "type": "dropdown",
-    "label": "Alertes Subs / Resubs / GiftSubs",
-    "value": "yes",
-    "options": { "yes": "Oui", "no": "Non" }
-  },
-
-  "enableBits": {
-    "type": "dropdown",
-    "label": "Alertes Bits / Cheers",
-    "value": "yes",
-    "options": { "yes": "Oui", "no": "Non" }
-  },
-
-  "enableTip": {
-    "type": "dropdown",
-    "label": "Alertes Donations (Tips)",
-    "value": "yes",
-    "options": { "yes": "Oui", "no": "Non" }
-  },
-
-  "enableRaid": {
-    "type": "dropdown",
-    "label": "Alertes Raids",
-    "value": "yes",
-    "options": { "yes": "Oui", "no": "Non" }
-  },
-
-  "enableHost": {
-    "type": "dropdown",
-    "label": "Alertes Hosts",
-    "value": "yes",
-    "options": { "yes": "Oui", "no": "Non" }
-  },
-
-  "minBits": {
-    "type": "number",
-    "label": "Montant minimum bits",
-    "value": 1,
-    "min": 1,
-    "step": 1
-  },
-
-  "minTip": {
-    "type": "number",
-    "label": "Montant minimum donation",
-    "value": 0,
-    "min": 0,
-    "step": 1
-  },
+  "minBits": { "type": "number", "label": "Montant minimum bits",     "value": 1, "min": 1, "step": 1 },
+  "minTip":  { "type": "number", "label": "Montant minimum donation", "value": 0, "min": 0, "step": 1 },
 
   "_section_icons": { "type": "hidden", "value": "──── ICÔNES ────" },
 
@@ -371,42 +277,57 @@
 
   "_section_messages": { "type": "hidden", "value": "──── MESSAGES ────" },
 
-  "msgFollow":  { "type": "text", "label": "Message Follower ({user})",          "value": "{user} te follow ! 💜" },
-  "msgSub":     { "type": "text", "label": "Message Sub ({user})",               "value": "{user} vient de sub !" },
-  "msgResub":   { "type": "text", "label": "Message Resub ({user}, {months})",   "value": "{user} resub x{months} mois !" },
-  "msgGiftSub": { "type": "text", "label": "Message GiftSub ({user}, {count})",  "value": "{user} offre {count} sub(s) !" },
-  "msgBits":    { "type": "text", "label": "Message Bits ({user}, {bits})",      "value": "{user} envoie {bits} bits !" },
-  "msgTip":     { "type": "text", "label": "Message Donation ({user}, {amount})","value": "{user} donne {amount} !" },
-  "msgRaid":    { "type": "text", "label": "Message Raid ({user}, {count})",     "value": "{user} raid avec {count} raiders !" },
-  "msgHost":    { "type": "text", "label": "Message Host ({user})",              "value": "{user} host le stream !" },
+  "msgFollow":  { "type": "text", "label": "Message Follower ({user})",           "value": "{user} te follow ! 💜" },
+  "msgSub":     { "type": "text", "label": "Message Sub ({user})",                "value": "{user} vient de sub !" },
+  "msgResub":   { "type": "text", "label": "Message Resub ({user}, {months})",    "value": "{user} resub x{months} mois !" },
+  "msgGiftSub": { "type": "text", "label": "Message GiftSub ({user}, {count})",   "value": "{user} offre {count} sub(s) !" },
+  "msgBits":    { "type": "text", "label": "Message Bits ({user}, {bits})",       "value": "{user} envoie {bits} bits !" },
+  "msgTip":     { "type": "text", "label": "Message Donation ({user}, {amount})", "value": "{user} donne {amount} !" },
+  "msgRaid":    { "type": "text", "label": "Message Raid ({user}, {count})",      "value": "{user} raid avec {count} raiders !" },
+  "msgHost":    { "type": "text", "label": "Message Host ({user})",               "value": "{user} host le stream !" },
 
   "_section_colors": { "type": "hidden", "value": "──── COULEURS PAR TYPE ────" },
 
-  "colorFollow":  { "type": "text", "label": "Couleur Follower (ex: #9146ff — vide = thème)",  "value": "" },
-  "colorSub":     { "type": "text", "label": "Couleur Sub (ex: #ffcc00 — vide = thème)",       "value": "" },
-  "colorResub":   { "type": "text", "label": "Couleur Resub (ex: #ffaa00 — vide = thème)",     "value": "" },
-  "colorGiftSub": { "type": "text", "label": "Couleur GiftSub (ex: #ff69b4 — vide = thème)",   "value": "" },
-  "colorBits":    { "type": "text", "label": "Couleur Bits (ex: #00d4ff — vide = thème)",      "value": "" },
-  "colorTip":     { "type": "text", "label": "Couleur Donation (ex: #00ff99 — vide = thème)",  "value": "" },
-  "colorRaid":    { "type": "text", "label": "Couleur Raid (ex: #ff4500 — vide = thème)",      "value": "" },
-  "colorHost":    { "type": "text", "label": "Couleur Host (ex: #1e90ff — vide = thème)",      "value": "" },
+  "useColorFollow":  { "type": "dropdown", "label": "Couleur custom Follower",  "value": "no",  "options": { "yes": "Oui", "no": "Non (thème)" } },
+  "colorFollow":     { "type": "colorpicker", "label": "↳ Couleur Follower",    "value": "#9146ff" },
+
+  "useColorSub":     { "type": "dropdown", "label": "Couleur custom Sub",       "value": "no",  "options": { "yes": "Oui", "no": "Non (thème)" } },
+  "colorSub":        { "type": "colorpicker", "label": "↳ Couleur Sub",         "value": "#ffcc00" },
+
+  "useColorResub":   { "type": "dropdown", "label": "Couleur custom Resub",     "value": "no",  "options": { "yes": "Oui", "no": "Non (thème)" } },
+  "colorResub":      { "type": "colorpicker", "label": "↳ Couleur Resub",       "value": "#ffaa00" },
+
+  "useColorGiftSub": { "type": "dropdown", "label": "Couleur custom GiftSub",   "value": "no",  "options": { "yes": "Oui", "no": "Non (thème)" } },
+  "colorGiftSub":    { "type": "colorpicker", "label": "↳ Couleur GiftSub",     "value": "#ff69b4" },
+
+  "useColorBits":    { "type": "dropdown", "label": "Couleur custom Bits",      "value": "no",  "options": { "yes": "Oui", "no": "Non (thème)" } },
+  "colorBits":       { "type": "colorpicker", "label": "↳ Couleur Bits",        "value": "#00d4ff" },
+
+  "useColorTip":     { "type": "dropdown", "label": "Couleur custom Donation",  "value": "no",  "options": { "yes": "Oui", "no": "Non (thème)" } },
+  "colorTip":        { "type": "colorpicker", "label": "↳ Couleur Donation",    "value": "#00ff99" },
+
+  "useColorRaid":    { "type": "dropdown", "label": "Couleur custom Raid",      "value": "no",  "options": { "yes": "Oui", "no": "Non (thème)" } },
+  "colorRaid":       { "type": "colorpicker", "label": "↳ Couleur Raid",        "value": "#ff4500" },
+
+  "useColorHost":    { "type": "dropdown", "label": "Couleur custom Host",      "value": "no",  "options": { "yes": "Oui", "no": "Non (thème)" } },
+  "colorHost":       { "type": "colorpicker", "label": "↳ Couleur Host",        "value": "#1e90ff" },
 
   "_section_sounds": { "type": "hidden", "value": "──── SONS ────" },
 
-  "soundFollow":       { "type": "text",   "label": "Son Follower (URL)",      "value": "" },
-  "soundVolumeFollow": { "type": "slider", "label": "Volume Follower (0–100)", "value": 70,  "min": 0, "max": 100, "step": 1 },
-  "soundSub":          { "type": "text",   "label": "Son Sub (URL)",           "value": "" },
-  "soundVolumeSub":    { "type": "slider", "label": "Volume Sub (0–100)",      "value": 80,  "min": 0, "max": 100, "step": 1 },
-  "soundResub":        { "type": "text",   "label": "Son Resub (URL)",         "value": "" },
-  "soundVolumeResub":  { "type": "slider", "label": "Volume Resub (0–100)",    "value": 80,  "min": 0, "max": 100, "step": 1 },
-  "soundGiftSub":      { "type": "text",   "label": "Son GiftSub (URL)",       "value": "" },
-  "soundVolumeGiftSub":{ "type": "slider", "label": "Volume GiftSub (0–100)",  "value": 80,  "min": 0, "max": 100, "step": 1 },
-  "soundBits":         { "type": "text",   "label": "Son Bits (URL)",          "value": "" },
-  "soundVolumeBits":   { "type": "slider", "label": "Volume Bits (0–100)",     "value": 75,  "min": 0, "max": 100, "step": 1 },
-  "soundTip":          { "type": "text",   "label": "Son Donation (URL)",      "value": "" },
-  "soundVolumeTip":    { "type": "slider", "label": "Volume Donation (0–100)", "value": 90,  "min": 0, "max": 100, "step": 1 },
-  "soundRaid":         { "type": "text",   "label": "Son Raid (URL)",          "value": "" },
-  "soundVolumeRaid":   { "type": "slider", "label": "Volume Raid (0–100)",     "value": 80,  "min": 0, "max": 100, "step": 1 },
-  "soundHost":         { "type": "text",   "label": "Son Host (URL)",          "value": "" },
-  "soundVolumeHost":   { "type": "slider", "label": "Volume Host (0–100)",     "value": 70,  "min": 0, "max": 100, "step": 1 }
+  "soundFollow":        { "type": "text",   "label": "Son Follower (URL)",      "value": "" },
+  "soundVolumeFollow":  { "type": "slider", "label": "Volume Follower (0–100)", "value": 70,  "min": 0, "max": 100, "step": 1 },
+  "soundSub":           { "type": "text",   "label": "Son Sub (URL)",           "value": "" },
+  "soundVolumeSub":     { "type": "slider", "label": "Volume Sub (0–100)",      "value": 80,  "min": 0, "max": 100, "step": 1 },
+  "soundResub":         { "type": "text",   "label": "Son Resub (URL)",         "value": "" },
+  "soundVolumeResub":   { "type": "slider", "label": "Volume Resub (0–100)",    "value": 80,  "min": 0, "max": 100, "step": 1 },
+  "soundGiftSub":       { "type": "text",   "label": "Son GiftSub (URL)",       "value": "" },
+  "soundVolumeGiftSub": { "type": "slider", "label": "Volume GiftSub (0–100)",  "value": 80,  "min": 0, "max": 100, "step": 1 },
+  "soundBits":          { "type": "text",   "label": "Son Bits (URL)",          "value": "" },
+  "soundVolumeBits":    { "type": "slider", "label": "Volume Bits (0–100)",     "value": 75,  "min": 0, "max": 100, "step": 1 },
+  "soundTip":           { "type": "text",   "label": "Son Donation (URL)",      "value": "" },
+  "soundVolumeTip":     { "type": "slider", "label": "Volume Donation (0–100)", "value": 90,  "min": 0, "max": 100, "step": 1 },
+  "soundRaid":          { "type": "text",   "label": "Son Raid (URL)",          "value": "" },
+  "soundVolumeRaid":    { "type": "slider", "label": "Volume Raid (0–100)",     "value": 80,  "min": 0, "max": 100, "step": 1 },
+  "soundHost":          { "type": "text",   "label": "Son Host (URL)",          "value": "" },
+  "soundVolumeHost":    { "type": "slider", "label": "Volume Host (0–100)",     "value": 70,  "min": 0, "max": 100, "step": 1 }
 }

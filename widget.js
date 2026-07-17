@@ -37,9 +37,6 @@ function sanitize(str) {
   return div.innerHTML;
 }
 
-/**
- * Convertit un HEX (#rrggbb ou #rgb) en rgba(r,g,b,a)
- */
 function hex2rgba(hex, alpha) {
   hex = hex.replace('#', '');
   if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
@@ -61,24 +58,24 @@ function applyTheme() {
     const s = wrapper.style;
     s.setProperty('--accent-color',     getField('accentColor', '#9146ff'));
     s.setProperty('--accent-secondary', getField('accentSecondary', '#bf94ff'));
-    const glowHex    = getField('glowColor', '#9146ff');
-    const glowAlpha  = (parseInt(getField('glowOpacity', '40'))  || 40)  / 100;
-    const bgHex      = getField('bgColor',   '#0f0a1e');
-    const bgAlpha    = (parseInt(getField('bgOpacity',   '95'))  || 95)  / 100;
-    const borderHex  = getField('borderColor', '#9146ff');
-    const borderAlpha= (parseInt(getField('borderOpacity','50')) || 50) / 100;
+    const glowHex     = getField('glowColor', '#9146ff');
+    const glowAlpha   = (parseInt(getField('glowOpacity', '40'))   || 40)  / 100;
+    const bgHex       = getField('bgColor',   '#0f0a1e');
+    const bgAlpha     = (parseInt(getField('bgOpacity',   '95'))   || 95)  / 100;
+    const borderHex   = getField('borderColor', '#9146ff');
+    const borderAlpha = (parseInt(getField('borderOpacity', '50')) || 50) / 100;
     s.setProperty('--glow-color',   hex2rgba(glowHex,   glowAlpha));
     s.setProperty('--bg-color',     hex2rgba(bgHex,     bgAlpha));
     s.setProperty('--border-color', hex2rgba(borderHex, borderAlpha));
   }
 
-  wrapper.style.setProperty('--border-radius',       getField('borderRadius', '16') + 'px');
-  wrapper.style.setProperty('--font-title',          getField('fontTitle', 'Montserrat'));
-  wrapper.style.setProperty('--font-message',        getField('fontMessage', 'Inter'));
-  wrapper.style.setProperty('--font-size-username',  getField('fontSizeUsername', '22') + 'px');
-  wrapper.style.setProperty('--font-size-message',   getField('fontSizeMessage', '14') + 'px');
-  wrapper.style.setProperty('--color-username',      getField('colorUsername', '#ffffff'));
-  wrapper.style.setProperty('--color-message',       getField('colorMessage', 'rgba(255,255,255,0.88)'));
+  wrapper.style.setProperty('--border-radius',      getField('borderRadius', '16') + 'px');
+  wrapper.style.setProperty('--font-title',         getField('fontTitle', 'Montserrat'));
+  wrapper.style.setProperty('--font-message',       getField('fontMessage', 'Inter'));
+  wrapper.style.setProperty('--font-size-username', getField('fontSizeUsername', '22') + 'px');
+  wrapper.style.setProperty('--font-size-message',  getField('fontSizeMessage', '14') + 'px');
+  wrapper.style.setProperty('--color-username',     getField('colorUsername', '#ffffff'));
+  wrapper.style.setProperty('--color-message',      getField('colorMessage', 'rgba(255,255,255,0.88)'));
 
   const pos = getField('position', 'bottom-center');
   const posClasses = ['pos-top-left','pos-top-center','pos-top-right','pos-bottom-left','pos-bottom-right','pos-center'];
@@ -148,8 +145,6 @@ function launchConfetti(count = 60) {
 }
 
 // ── Son ───────────────────────────────────────
-// Les volumes sont stockés en 0–100 (entiers) dans fields.json,
-// on divise par 100 ici pour obtenir la valeur 0–1 attendue par HTMLAudioElement.
 function playSound(url, volumeInt) {
   if (!url) return;
   const volume = Math.min(1, Math.max(0, (parseInt(volumeInt) || 70) / 100));
@@ -178,9 +173,9 @@ function getTypeConfig(type) {
 
 // ── Construction du message ───────────────────
 function buildAlertContent(data) {
-  const type  = data.type;
-  const cfg   = getTypeConfig(type);
-  const name  = sanitize(data.username || data.name || 'Anonyme');
+  const type = data.type;
+  const cfg  = getTypeConfig(type);
+  const name = sanitize(data.username || data.name || 'Anonyme');
 
   let mainMsg  = '';
   let subMsgTx = '';
@@ -222,12 +217,10 @@ function buildAlertContent(data) {
       break;
     }
     case 'tip': {
-      const amount   = (parseFloat(data.amount) || 0).toFixed(2);
-      const currency = data.currency || getField('currency', '€');
-      mainMsg = getField('msgTip', '{user} donne {amount}{currency} !')
+      const amount = (parseFloat(data.amount) || 0).toFixed(2);
+      mainMsg = getField('msgTip', '{user} donne {amount} !')
         .replace('{user}', name)
-        .replace('{amount}', amount)
-        .replace('{currency}', currency);
+        .replace('{amount}', amount);
       emojiOverride = getField('iconTip', '💰');
       if (data.message) subMsgTx = '"' + sanitize(data.message) + '"';
       break;
@@ -252,22 +245,37 @@ function buildAlertContent(data) {
 }
 
 // ── Couleurs par type ─────────────────────────
+// Chaque type a un toggle useColorXxx (dropdown oui/non) + un colorpicker colorXxx.
+// Si le toggle est "yes", on applique la couleur du picker ; sinon on revient au thème.
 function applyTypeColors(type) {
-  const colorMap = {
-    follower:   getField('colorFollow', ''),
-    subscriber: getField('colorSub', ''),
-    resub:      getField('colorResub', ''),
-    giftsub:    getField('colorGiftSub', ''),
-    cheer:      getField('colorBits', ''),
-    tip:        getField('colorTip', ''),
-    raid:       getField('colorRaid', ''),
-    host:       getField('colorHost', ''),
+  const toggleMap = {
+    follower:   'useColorFollow',
+    subscriber: 'useColorSub',
+    resub:      'useColorResub',
+    giftsub:    'useColorGiftSub',
+    cheer:      'useColorBits',
+    tip:        'useColorTip',
+    raid:       'useColorRaid',
+    host:       'useColorHost',
   };
-  const accentOverride = colorMap[type] || '';
-  if (accentOverride) {
-    box.style.setProperty('--accent-color', accentOverride);
-    box.style.borderColor = accentOverride + '88';
-    box.style.boxShadow   = `0 0 0 1px rgba(255,255,255,0.04) inset, 0 0 30px ${accentOverride}55, 0 8px 40px rgba(0,0,0,0.55)`;
+  const colorMap = {
+    follower:   'colorFollow',
+    subscriber: 'colorSub',
+    resub:      'colorResub',
+    giftsub:    'colorGiftSub',
+    cheer:      'colorBits',
+    tip:        'colorTip',
+    raid:       'colorRaid',
+    host:       'colorHost',
+  };
+
+  const useCustom = getField(toggleMap[type], 'no') === 'yes';
+  const color     = useCustom ? getField(colorMap[type], '') : '';
+
+  if (color) {
+    box.style.setProperty('--accent-color', color);
+    box.style.borderColor = color + '88';
+    box.style.boxShadow   = `0 0 0 1px rgba(255,255,255,0.04) inset, 0 0 30px ${color}55, 0 8px 40px rgba(0,0,0,0.55)`;
   } else {
     box.style.removeProperty('--accent-color');
     box.style.removeProperty('border-color');
@@ -292,7 +300,6 @@ function startProgressBar(durationMs) {
   if (progressRafId) cancelAnimationFrame(progressRafId);
   progressFill.style.transition = 'none';
   progressFill.style.transform  = 'scaleX(1)';
-  void progressFill.offsetWidth;
   progressRafId = requestAnimationFrame(() => {
     progressFill.style.transition = `transform ${durationMs / 1000}s linear`;
     progressFill.style.transform  = 'scaleX(0)';
@@ -366,7 +373,6 @@ function showAlert(data) {
     }, 200);
   }
 
-  // Volumes en 0–100 dans les champs → playSound divise par 100
   const soundMap = {
     follower:   [getField('soundFollow', ''),   getField('soundVolumeFollow', '70')],
     subscriber: [getField('soundSub', ''),      getField('soundVolumeSub', '80')],
@@ -411,9 +417,7 @@ function processQueue() {
 
 function queueAlert(data) {
   const maxQueue = Math.max(1, parseInt(getField('maxQueue', '10')) || 10);
-  if (alertQueue.length >= maxQueue) {
-    alertQueue.shift();
-  }
+  if (alertQueue.length >= maxQueue) alertQueue.shift();
   alertQueue.push(data);
   processQueue();
 }
