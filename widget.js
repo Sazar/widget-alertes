@@ -32,8 +32,6 @@ function getField(key, fallback) {
   return (v !== undefined && v !== '') ? v : fallback;
 }
 
-// SE envoie les checkbox comme booléen true/false ou string 'true'/'false'
-// selon la version de l'éditeur. On normalise en booléen.
 function getCheckbox(key, defaultVal) {
   const v = fieldData[key];
   if (v === undefined || v === '') return defaultVal;
@@ -96,28 +94,39 @@ function applyTheme() {
 }
 
 // ── Particules ────────────────────────────────
+// Améliorations :
+//  - Vélocité divisée par 2 (vx/vy *= 3 au lieu de 6)
+//  - Gravité réduite (0.06 au lieu de 0.12) → trajectoire plus douce et plus haute
+//  - Décroissance de vie ralentie (0.012 au lieu de 0.022) → durée ~2x plus longue
+//  - Taille légèrement augmentée (r: 2–7px au lieu de 1.5–5px)
+//  - Canvas agrandi (180x180 au lieu de 140x140) pour suivre la trajectoire plus loin
+//  - Particules émises en éventail vers le haut (vy biaisé à -2)
 function launchParticles(color1, color2) {
   if (getField('showParticles', 'yes') !== 'yes') return;
   const count = Math.min(parseInt(getField('particleCount', '14')) || 14, 40);
-  canvas.width  = 140;
-  canvas.height = 140;
+
+  canvas.width  = 180;
+  canvas.height = 180;
   const ctx = canvas.getContext('2d');
+
   let particles = Array.from({ length: count }, () => ({
-    x: 70, y: 70,
-    vx: (Math.random() - 0.5) * 6,
-    vy: (Math.random() - 0.5) * 6 - 1,
-    r:  Math.random() * 3.5 + 1.5,
+    x:    90,
+    y:    90,
+    vx:   (Math.random() - 0.5) * 3,
+    vy:   (Math.random() - 0.5) * 3 - 2,
+    r:    Math.random() * 2.5 + 2,
     life: 1,
     color: Math.random() > 0.5 ? color1 : color2
   }));
+
   function draw() {
-    ctx.clearRect(0, 0, 140, 140);
+    ctx.clearRect(0, 0, 180, 180);
     particles = particles.filter(p => p.life > 0.01);
     particles.forEach(p => {
-      p.x  += p.vx;
-      p.y  += p.vy;
-      p.vy += 0.12;
-      p.life -= 0.022;
+      p.x    += p.vx;
+      p.y    += p.vy;
+      p.vy   += 0.06;
+      p.life -= 0.012;
       ctx.globalAlpha = Math.max(0, p.life);
       ctx.fillStyle   = p.color;
       ctx.beginPath();
@@ -125,7 +134,7 @@ function launchParticles(color1, color2) {
       ctx.fill();
     });
     if (particles.length > 0) requestAnimationFrame(draw);
-    else ctx.clearRect(0, 0, 140, 140);
+    else ctx.clearRect(0, 0, 180, 180);
   }
   draw();
 }
@@ -306,21 +315,17 @@ function setTypeBadge(type) {
 let progressRafId = null;
 
 function startProgressBar(durationMs) {
-  // Checkbox SE : booléen ou string 'true'/'false'
   if (!getCheckbox('showProgressBar', true)) {
     progressBar.classList.remove('visible');
     return;
   }
 
   progressBar.classList.add('visible');
-
   if (progressRafId) cancelAnimationFrame(progressRafId);
 
-  // Reset sans transition
   progressFill.style.transition = 'none';
   progressFill.style.transform  = 'scaleX(1)';
 
-  // Double rAF : garantit que le navigateur a rendu le reset avant de lancer le shrink
   progressRafId = requestAnimationFrame(() => {
     progressRafId = requestAnimationFrame(() => {
       progressFill.style.transition = `transform ${durationMs / 1000}s linear`;

@@ -76,35 +76,35 @@
     }
   },
 
-  "accentColor":     { "type": "colorpicker", "label": "Couleur accent (thème custom)",            "value": "#9146ff" },
-  "accentSecondary": { "type": "colorpicker", "label": "Couleur accent secondaire (thème custom)", "value": "#bf94ff" },
-  "glowColor":       { "type": "colorpicker", "label": "Couleur glow (thème custom)",              "value": "#9146ff" },
+  "accentColor":     { "type": "colorpicker", "label": "[Thème custom] Couleur accent",            "value": "#9146ff" },
+  "accentSecondary": { "type": "colorpicker", "label": "[Thème custom] Couleur accent secondaire", "value": "#bf94ff" },
+  "glowColor":       { "type": "colorpicker", "label": "[Thème custom] Couleur glow",              "value": "#9146ff" },
 
   "glowOpacity": {
     "type": "slider",
-    "label": "Opacité glow (0–100)",
+    "label": "[Thème custom] Opacité glow (0–100)",
     "value": 40,
     "min": 0,
     "max": 100,
     "step": 1
   },
 
-  "bgColor": { "type": "colorpicker", "label": "Couleur fond (thème custom)",    "value": "#0f0a1e" },
+  "bgColor": { "type": "colorpicker", "label": "[Thème custom] Couleur fond",    "value": "#0f0a1e" },
 
   "bgOpacity": {
     "type": "slider",
-    "label": "Opacité fond (0–100)",
+    "label": "[Thème custom] Opacité fond (0–100)",
     "value": 95,
     "min": 0,
     "max": 100,
     "step": 1
   },
 
-  "borderColor": { "type": "colorpicker", "label": "Couleur bordure (thème custom)", "value": "#9146ff" },
+  "borderColor": { "type": "colorpicker", "label": "[Thème custom] Couleur bordure", "value": "#9146ff" },
 
   "borderOpacity": {
     "type": "slider",
-    "label": "Opacité bordure (0–100)",
+    "label": "[Thème custom] Opacité bordure (0–100)",
     "value": 50,
     "min": 0,
     "max": 100,
@@ -113,7 +113,7 @@
 
   "borderRadius": {
     "type": "number",
-    "label": "Arrondi des coins (px)",
+    "label": "[Thème custom] Arrondi des coins (px)",
     "value": 16,
     "min": 0,
     "max": 40,
@@ -122,7 +122,7 @@
 
   "pulseGlow": {
     "type": "dropdown",
-    "label": "Effet pulse glow",
+    "label": "[Thème custom] Effet pulse glow",
     "value": "yes",
     "options": { "yes": "Oui", "no": "Non" }
   },
