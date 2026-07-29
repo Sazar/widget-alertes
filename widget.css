@@ -140,6 +140,8 @@ body {
   width: 64px;
   height: 64px;
   border-radius: 50%;
+  /* FIX: fallback sans color-mix() pour compatibilité OBS < Chromium 111 */
+  background: linear-gradient(135deg, #6b2fff, #0090cc);
   background: linear-gradient(135deg,
     color-mix(in srgb, var(--accent-color, #9146ff) 80%, black),
     color-mix(in srgb, var(--accent-secondary, #00d4ff) 80%, black)
@@ -207,6 +209,7 @@ body {
   line-height: 1.45;
 }
 
+/* FIX: ajout de max-width: 100% pour éviter le débordement sur widgets étroits */
 #alert-sub-message {
   font-family: var(--font-message, 'Inter'), sans-serif;
   font-size: 12px;
@@ -219,6 +222,7 @@ body {
   text-overflow: ellipsis;
   display: none;
   white-space: nowrap;
+  max-width: 100%;
 }
 
 /* ── Barre de progression ──────────────────── */

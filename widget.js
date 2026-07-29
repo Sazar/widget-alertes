@@ -44,9 +44,11 @@ function sanitize(str) {
   return div.innerHTML;
 }
 
+// FIX: validation hex avant parseInt pour éviter rgba(NaN,NaN,NaN,x) si valeur invalide
 function hex2rgba(hex, alpha) {
-  hex = hex.replace('#', '');
+  hex = String(hex).replace('#', '').trim();
   if (hex.length === 3) hex = hex.split('').map(c => c + c).join('');
+  if (!/^[0-9a-fA-F]{6}$/.test(hex)) return `rgba(145,70,255,${Math.min(1, Math.max(0, alpha))})`;
   const r = parseInt(hex.substring(0, 2), 16);
   const g = parseInt(hex.substring(2, 4), 16);
   const b = parseInt(hex.substring(4, 6), 16);
@@ -156,8 +158,10 @@ function launchConfetti(count = 60) {
 }
 
 // ── Son ───────────────────────────────────────
+// FIX: vérification de l'extension avant de charger l'audio
 function playSound(url, volumeInt) {
   if (!url) return;
+  if (!/\.(mp3|ogg|wav|m4a|aac)$/i.test(url.trim())) return;
   const volume = Math.min(1, Math.max(0, (parseInt(volumeInt) || 70) / 100));
   soundEl.src    = url;
   soundEl.volume = volume;
@@ -335,7 +339,10 @@ function startProgressBar(durationMs) {
 }
 
 function stopProgressBar() {
-  if (progressRafId) cancelAnimationFrame(progressRafId);
+  if (progressRafId) {
+    cancelAnimationFrame(progressRafId);
+    progressRafId = null;
+  }
   progressBar.classList.remove('visible');
   progressFill.style.transition = 'none';
   progressFill.style.transform  = 'scaleX(1)';
@@ -343,6 +350,8 @@ function stopProgressBar() {
 
 // ── Affichage d'une alerte ─────────────────────
 function showAlert(data) {
+  // FIX: stopper la barre précédente avant d'en démarrer une nouvelle
+  stopProgressBar();
   applyTheme();
 
   const { name, mainMsg, subMsgTx, emoji } = buildAlertContent(data);
@@ -367,11 +376,16 @@ function showAlert(data) {
 
   setTypeBadge(type);
 
+  // FIX: gestion d'erreur avatar — fallback sur emoji si l'image ne charge pas
   const useAvatar = getField('showAvatar', 'no') === 'yes' && data.avatar;
   if (useAvatar) {
     const img = document.createElement('img');
-    img.src   = data.avatar;
     img.alt   = name + ' avatar';
+    img.onerror = () => {
+      iconEl.textContent = emoji;
+      iconEl.classList.remove('avatar-mode');
+    };
+    img.src   = data.avatar;
     iconEl.innerHTML = '';
     iconEl.appendChild(img);
     iconEl.classList.add('avatar-mode');
@@ -476,17 +490,21 @@ function queueAlert(data) {
 //
 // IMPORTANT : SE utilise "amount" pour les mois sur subscriber-latest,
 // PAS "months". Et il n'y a pas de flag "isResub" — on détecte via streak ou amount > 1.
+// FIX: ajout du flag evt.isResub en priorité (certaines intégrations SE l'envoient),
+//      et streak=1 traité comme resub (premier mois consécutif après renouvellement).
 function detectSubType(evt) {
   // 1. GiftSub — le sub a été offert par quelqu'un d'autre
   if (evt.isGift || evt.gifted || evt.isCommunityGift || evt.bulkGift || evt.sender) {
     return 'giftsub';
   }
-  // 2. Resub — SE envoie streak > 0 pour les renouvellements
-  if (evt.streak && parseInt(evt.streak) > 0) return 'resub';
-  // 3. Resub — fallback sur amount (= mois) ou months
+  // 2. Flag isResub explicite (certaines versions SE)
+  if (evt.isResub === true) return 'resub';
+  // 3. Resub — SE envoie streak >= 1 pour les renouvellements
+  if (evt.streak && parseInt(evt.streak) >= 1) return 'resub';
+  // 4. Resub — fallback sur amount (= mois) ou months
   const months = parseInt(evt.amount) || parseInt(evt.months) || 0;
   if (months > 1) return 'resub';
-  // 4. Nouveau sub
+  // 5. Nouveau sub
   return 'subscriber';
 }
 
@@ -600,7 +618,7 @@ window.addEventListener('onTestButtonClick', function (obj) {
   const subTests = {
     // Nouveau sub : amount=1, streak=0, pas de sender/isGift
     subscriber: { displayName: 'SubFan99',      name: 'SubFan99',      amount: 1, streak: 0, isGift: false, gifted: false, message: 'Super stream !' },
-    // Resub : streak > 0 ET amount > 1
+    // Resub : streak >= 1
     resub:      { displayName: 'FidèleViewer',  name: 'FidèleViewer',  amount: 6, streak: 6, isGift: false, gifted: false, message: 'Déjà 6 mois !' },
     // GiftSub : isGift=true + sender = bénéficiaire
     giftsub:    { displayName: 'GiftKing',       name: 'GiftKing',       amount: 1, streak: 0, isGift: true,  gifted: true,  sender: 'LuckyViewer', recipient: 'LuckyViewer' },
