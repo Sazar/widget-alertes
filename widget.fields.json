@@ -276,16 +276,31 @@
   "iconRaid":    { "type": "text", "label": "Icône Raid",      "value": "⚔️" },
   "iconHost":    { "type": "text", "label": "Icône Host",      "value": "📡" },
 
-  "_section_messages": { "type": "hidden", "value": "───── MESSAGES ─────" },
+  "_section_messages": { "type": "hidden", "value": "───── TEXTES DES ALERTES — variables : {user} {months} {amount} {count} {recipient} ─────" },
 
-  "msgFollow":  { "type": "text", "label": "Message Follower  — variables : {user}",                       "value": "{user} te follow ! 💜" },
-  "msgSub":     { "type": "text", "label": "Message Sub       — variables : {user}",                       "value": "{user} vient de sub !" },
-  "msgResub":   { "type": "text", "label": "Message Resub     — variables : {user}, {months}",             "value": "{user} resub x{months} mois !" },
-  "msgGiftSub": { "type": "text", "label": "Message GiftSub   — variables : {user}, {count}, {recipient}", "value": "{user} offre {count} sub(s) à {recipient} !" },
-  "msgBits":    { "type": "text", "label": "Message Bits      — variables : {user}, {bits}",               "value": "{user} envoie {bits} bits !" },
-  "msgTip":     { "type": "text", "label": "Message Donation  — variables : {user}, {amount}",             "value": "{user} donne {amount} !" },
-  "msgRaid":    { "type": "text", "label": "Message Raid      — variables : {user}, {count}",              "value": "{user} raid avec {count} raiders !" },
-  "msgHost":    { "type": "text", "label": "Message Host      — variables : {user}",                       "value": "{user} host le stream !" },
+  "_title_msg_follow":  { "type": "hidden", "value": "· Follower" },
+  "msgFollow":  { "type": "text", "label": "Texte affiché · ex : {user} vient de follow ! 💜",                              "value": "{user} te follow ! 💜" },
+
+  "_title_msg_sub":     { "type": "hidden", "value": "· Nouveau Sub" },
+  "msgSub":     { "type": "text", "label": "Texte affiché · ex : {user} vient de sub !",                                    "value": "{user} vient de sub !" },
+
+  "_title_msg_resub":   { "type": "hidden", "value": "· Resub (renouvellement)" },
+  "msgResub":   { "type": "text", "label": "Texte affiché · ex : {user} resub x{months} mois !",                            "value": "{user} resub x{months} mois !" },
+
+  "_title_msg_giftsub": { "type": "hidden", "value": "· Gift Sub (sub offert)" },
+  "msgGiftSub": { "type": "text", "label": "Texte affiché · ex : {user} offre {count} sub(s) à {recipient} !",              "value": "{user} offre {count} sub(s) à {recipient} !" },
+
+  "_title_msg_bits":    { "type": "hidden", "value": "· Bits / Cheer" },
+  "msgBits":    { "type": "text", "label": "Texte affiché · ex : {user} envoie {bits} bits !",                              "value": "{user} envoie {bits} bits !" },
+
+  "_title_msg_tip":     { "type": "hidden", "value": "· Donation (Tip)" },
+  "msgTip":     { "type": "text", "label": "Texte affiché · ex : {user} donne {amount} !",                                  "value": "{user} donne {amount} !" },
+
+  "_title_msg_raid":    { "type": "hidden", "value": "· Raid" },
+  "msgRaid":    { "type": "text", "label": "Texte affiché · ex : {user} raid avec {count} raiders !",                       "value": "{user} raid avec {count} raiders !" },
+
+  "_title_msg_host":    { "type": "hidden", "value": "· Host" },
+  "msgHost":    { "type": "text", "label": "Texte affiché · ex : {user} host le stream !",                                  "value": "{user} host le stream !" },
 
   "_section_colors": { "type": "hidden", "value": "───── COULEURS PAR TYPE ─────" },
 
@@ -313,22 +328,37 @@
   "useColorHost":    { "type": "dropdown", "label": "Couleur custom Host",      "value": "no", "options": { "yes": "Oui", "no": "Non (thème)" } },
   "colorHost":       { "type": "colorpicker", "label": "↳ Couleur Host",        "value": "#1e90ff" },
 
-  "_section_sounds": { "type": "hidden", "value": "───── SONS ─────" },
+  "_section_sounds": { "type": "hidden", "value": "───── SONS — URL directe mp3/ogg/wav · laisser vide = silence ─────" },
 
-  "soundFollow":        { "type": "text",   "label": "Son Follower (URL)",      "value": "" },
-  "soundVolumeFollow":  { "type": "slider", "label": "Volume Follower (0–100)", "value": 70,  "min": 0, "max": 100, "step": 1 },
-  "soundSub":           { "type": "text",   "label": "Son Sub (URL)",           "value": "" },
-  "soundVolumeSub":     { "type": "slider", "label": "Volume Sub (0–100)",      "value": 80,  "min": 0, "max": 100, "step": 1 },
-  "soundResub":         { "type": "text",   "label": "Son Resub (URL)",         "value": "" },
-  "soundVolumeResub":   { "type": "slider", "label": "Volume Resub (0–100)",    "value": 80,  "min": 0, "max": 100, "step": 1 },
-  "soundGiftSub":       { "type": "text",   "label": "Son GiftSub (URL)",       "value": "" },
-  "soundVolumeGiftSub": { "type": "slider", "label": "Volume GiftSub (0–100)",  "value": 80,  "min": 0, "max": 100, "step": 1 },
-  "soundBits":          { "type": "text",   "label": "Son Bits (URL)",          "value": "" },
-  "soundVolumeBits":    { "type": "slider", "label": "Volume Bits (0–100)",     "value": 75,  "min": 0, "max": 100, "step": 1 },
-  "soundTip":           { "type": "text",   "label": "Son Donation (URL)",      "value": "" },
-  "soundVolumeTip":     { "type": "slider", "label": "Volume Donation (0–100)", "value": 90,  "min": 0, "max": 100, "step": 1 },
-  "soundRaid":          { "type": "text",   "label": "Son Raid (URL)",          "value": "" },
-  "soundVolumeRaid":    { "type": "slider", "label": "Volume Raid (0–100)",     "value": 80,  "min": 0, "max": 100, "step": 1 },
-  "soundHost":          { "type": "text",   "label": "Son Host (URL)",          "value": "" },
-  "soundVolumeHost":    { "type": "slider", "label": "Volume Host (0–100)",     "value": 70,  "min": 0, "max": 100, "step": 1 }
+  "_title_sound_follow":  { "type": "hidden", "value": "· Follower" },
+  "soundFollow":          { "type": "text",   "label": "URL du son · ex : https://cdn.../sound.mp3", "value": "" },
+  "soundVolumeFollow":    { "type": "slider", "label": "Volume (0 = muet, 100 = max)",               "value": 70,  "min": 0, "max": 100, "step": 1 },
+
+  "_title_sound_sub":     { "type": "hidden", "value": "· Nouveau Sub" },
+  "soundSub":             { "type": "text",   "label": "URL du son · ex : https://cdn.../sound.mp3", "value": "" },
+  "soundVolumeSub":       { "type": "slider", "label": "Volume (0 = muet, 100 = max)",               "value": 80,  "min": 0, "max": 100, "step": 1 },
+
+  "_title_sound_resub":   { "type": "hidden", "value": "· Resub (renouvellement)" },
+  "soundResub":           { "type": "text",   "label": "URL du son · ex : https://cdn.../sound.mp3", "value": "" },
+  "soundVolumeResub":     { "type": "slider", "label": "Volume (0 = muet, 100 = max)",               "value": 80,  "min": 0, "max": 100, "step": 1 },
+
+  "_title_sound_giftsub": { "type": "hidden", "value": "· Gift Sub (sub offert)" },
+  "soundGiftSub":         { "type": "text",   "label": "URL du son · ex : https://cdn.../sound.mp3", "value": "" },
+  "soundVolumeGiftSub":   { "type": "slider", "label": "Volume (0 = muet, 100 = max)",               "value": 80,  "min": 0, "max": 100, "step": 1 },
+
+  "_title_sound_bits":    { "type": "hidden", "value": "· Bits / Cheer" },
+  "soundBits":            { "type": "text",   "label": "URL du son · ex : https://cdn.../sound.mp3", "value": "" },
+  "soundVolumeBits":      { "type": "slider", "label": "Volume (0 = muet, 100 = max)",               "value": 75,  "min": 0, "max": 100, "step": 1 },
+
+  "_title_sound_tip":     { "type": "hidden", "value": "· Donation (Tip)" },
+  "soundTip":             { "type": "text",   "label": "URL du son · ex : https://cdn.../sound.mp3", "value": "" },
+  "soundVolumeTip":       { "type": "slider", "label": "Volume (0 = muet, 100 = max)",               "value": 90,  "min": 0, "max": 100, "step": 1 },
+
+  "_title_sound_raid":    { "type": "hidden", "value": "· Raid" },
+  "soundRaid":            { "type": "text",   "label": "URL du son · ex : https://cdn.../sound.mp3", "value": "" },
+  "soundVolumeRaid":      { "type": "slider", "label": "Volume (0 = muet, 100 = max)",               "value": 80,  "min": 0, "max": 100, "step": 1 },
+
+  "_title_sound_host":    { "type": "hidden", "value": "· Host" },
+  "soundHost":            { "type": "text",   "label": "URL du son · ex : https://cdn.../sound.mp3", "value": "" },
+  "soundVolumeHost":      { "type": "slider", "label": "Volume (0 = muet, 100 = max)",               "value": 70,  "min": 0, "max": 100, "step": 1 }
 }
